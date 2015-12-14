@@ -6,7 +6,6 @@
 #define PARSER_SYMBOL_H
 
 #include <string>
-#include <unordered_map>
 
 namespace parser {
 
@@ -17,7 +16,7 @@ class Symbol {
  public:
 
   // Only terminals have a precedence.
-  enum SymbolType {
+  enum Type {
     UNKNOWN,
     NONTERMINAL,
     TERMINAL
@@ -35,39 +34,40 @@ class Symbol {
   // Return true iff the symbol id is non-terminal.
   static inline bool IsNonterminal(SymbolID id);
 
-  // An instance of Symbol is designed to be created by static function,
-  // rather than by its constructor, because C++ constructor has not completed
-  // the construction of the object, while in the constructor we are adding
-  // the symbol into the symbol-table at the same time.
-  static Symbol MakeSymbol(const std::string &tag, SymbolType type);
+  static Symbol MakeSymbol(const std::string &tag, Type type);
 
  public:
 
   void Print() const;
 
+  std::string GetTag() const { return tag_; }
+  SymbolID GetID() const { return id_; }
+  Type GetType() const { return type_; }
+
  private:
 
-  Symbol(const std::string &tag, SymbolType type);
+  Symbol(const std::string &tag, Type type);
 
   // Name of the symbol.
   std::string tag_;
 
-  SymbolType type_;
+  Type type_;
 
   // Each Symbol is marked by a SymbolID.
   SymbolID id_;
 
 };
 
-// SymbolTable is a singleton here, so we declare it as a namespace and wrap its
-// methods as static functions, hide its private members in Symbol.cc.
-namespace SymbolTable {
+// SymbolTable is a singleton class.
+class SymbolTable {
 
-Symbol GetSymbol(const std::string& tag);
+ public:
 
-void AddSymbol(const Symbol& symbol);
+  static Symbol GetSymbol(const std::string &tag);
 
-} // namespace SymbolTable
+  static Symbol GetSymbol(SymbolID id);
+
+};
 
 } // namespace parser
 

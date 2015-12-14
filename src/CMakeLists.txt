@@ -5,7 +5,8 @@ set(PARSER_SRC
         Associativity.cc
         Closure.cc
         State.cc
-        Rule.cc Rule.h Grammar.cc Grammar.h)
+        Rule.cc
+        Grammar.cc)
 
 add_executable(parser ${PARSER_SRC})
 target_link_libraries(parser ${Boost_LIBRARIES})
