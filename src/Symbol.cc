@@ -36,16 +36,8 @@ Symbol::Symbol(const std::string &tag,
 // the symbol into the symbol-table at the same time.
 Symbol Symbol::MakeSymbol(const std::string &tag, Type type) {
   Symbol sym(tag, type);
-  globSymbolTable[tag] = sym;
-  if (type == Type::NONTERMINAL) {
-    globNonTerminals.push_back(sym);
-    NNonTerminals++;
-    assert(NNonTerminals == globNonTerminals.size());
-  } else if (type == Type::TERMINAL) {
-    globTerminals.push_back(sym);
-    NTerminals++;
-    assert(NTerminals == globTerminals.size());
-  }
+  SymbolTable::AddSymbol(sym);
+  return sym.
 }
 
 Symbol SymbolTable::GetSymbol(const std::string &tag) {
@@ -60,6 +52,19 @@ Symbol SymbolTable::GetSymbol(SymbolID id) {
   } else {
     fprintf(stderr, "Unregistered ID!");
     abort();
+  }
+}
+
+void SymbolTable::AddSymbol(const Symbol &sym) {
+  globSymbolTable[sym.GetTag()] = sym;
+  if (sym.GetType() == Symbol::Type::NONTERMINAL) {
+    globNonTerminals.push_back(sym);
+    Symbol::NNonTerminals++;
+    assert(Symbol::NNonTerminals == globNonTerminals.size());
+  } else if (sym.GetType() == Symbol::Type::TERMINAL) {
+    globTerminals.push_back(sym);
+    Symbol::NTerminals++;
+    assert(Symbol::NTerminals == globTerminals.size());
   }
 }
 

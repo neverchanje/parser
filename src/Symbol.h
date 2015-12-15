@@ -67,6 +67,7 @@ class SymbolTable {
 
   static Symbol GetSymbol(SymbolID id);
 
+  static void AddSymbol(const Symbol &sym);
 };
 
 } // namespace parser

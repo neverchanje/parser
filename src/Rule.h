@@ -6,7 +6,6 @@
 #define PARSER_RULE_H
 
 #include <array>
-
 #include "Symbol.h"
 
 namespace parser {
@@ -18,7 +17,19 @@ namespace parser {
  */
 
 typedef int RuleID;
-typedef int ItemID;
+typedef SymbolID ItemID;
+
+class Rule;
+class RuleTable {
+
+ public:
+
+  static const Rule &GetRule(RuleID id);
+
+  static const Rule &AddRule(std::unique_ptr<Rule> &&pRule);
+
+};
+
 
 /**
  * Rule:
@@ -29,21 +40,32 @@ class Rule {
 
  public:
 
-  void Dump();
+  static const Rule &MakeRule(SymbolID lhs,
+                              std::array<ItemID, RHSSize> &&rhs) {
+    return RuleTable::AddRule(std::unique_ptr<Rule>(new Rule(lhs, rhs)));
+  }
 
-  void DumpLHS();
+ public:
 
-  void DumpRHS();
+  void Dump() const;
 
   // Return the length of the rhs.
-  size_t GetRHSSize() { return RHSSize; }
+  size_t GetRHSSize() const { return RHSSize; }
 
  private:
+
+  Rule(SymbolID lhs, const std::array<ItemID, RHSSize> &rhs) :
+      lhs_(lhs),
+      rhs_(rhs) {
+    rhs_[RHSSize] = 0;
+  }
 
   SymbolID lhs_;
 
   // +1 for the end symbol $
   std::array<ItemID, RHSSize + 1> rhs_;
+
+  RuleID id_;
 
 };
 
