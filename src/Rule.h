@@ -5,7 +5,7 @@
 #ifndef PARSER_RULE_H
 #define PARSER_RULE_H
 
-#include <array>
+#include <vector>
 #include "Symbol.h"
 
 namespace parser {
@@ -16,10 +16,39 @@ namespace parser {
  * for the definition of production.
  */
 
-typedef int RuleID;
+typedef size_t RuleID;
 typedef SymbolID ItemID;
 
-class Rule;
+/**
+ * Rule:
+ * lhs -> rhs1 rhs2 ...
+ */
+class Rule {
+
+ public:
+
+  static const Rule &Make(SymbolID lhs, std::vector<ItemID> &&rhs);
+
+ public:
+
+  void Dump() const;
+
+  // Return the length of the rhs.
+  size_t GetRHSSize() const { return rhs_.size(); }
+
+ private:
+
+  Rule(SymbolID lhs, std::vector<ItemID> &&rhs);
+
+  SymbolID lhs_;
+
+  // +1 for the end symbol $
+  std::vector<ItemID> rhs_;
+
+  RuleID id_;
+
+};
+
 class RuleTable {
 
  public:
@@ -29,45 +58,6 @@ class RuleTable {
   static const Rule &AddRule(std::unique_ptr<Rule> &&pRule);
 
   static size_t GetNRule();
-
-};
-
-
-/**
- * Rule:
- * lhs -> rhs1 rhs2 ... rhs{RHSSize}
- */
-template<size_t RHSSize>
-class Rule {
-
- public:
-
-  static const Rule &Make(SymbolID lhs,
-                          std::array<ItemID, RHSSize> &&rhs) {
-    return RuleTable::AddRule(std::unique_ptr<Rule>(new Rule(lhs, rhs)));
-  }
-
- public:
-
-  void Dump() const;
-
-  // Return the length of the rhs.
-  size_t GetRHSSize() const { return RHSSize; }
-
- private:
-
-  Rule(SymbolID lhs, const std::array<ItemID, RHSSize> &rhs) :
-      lhs_(lhs),
-      rhs_(rhs) {
-    rhs_[RHSSize] = 0;
-  }
-
-  SymbolID lhs_;
-
-  // +1 for the end symbol $
-  std::array<ItemID, RHSSize + 1> rhs_;
-
-  RuleID id_;
 
 };
 

@@ -2,7 +2,7 @@
 // Created by neverchanje on 12/7/15.
 //
 
-#include <assert.h>visu
+#include <assert.h>
 #include <unordered_map>
 #include <vector>
 #include "Symbol.h"
@@ -12,13 +12,13 @@ using namespace parser;
 static std::unordered_map<std::string, Symbol> globSymbolTable;
 static std::vector<Symbol> globSymbols;
 static size_t nTerminals = 0;
-static size_t nNonterminals = 0;
+static size_t nNonTerminals = 0;
 
 bool Symbol::IsTerminal(SymbolID id) {
   return globSymbols[id].GetType() == Type::TERMINAL;
 }
 
-bool Symbol::IsNonterminal(SymbolID id) {
+bool Symbol::IsNonTerminal(SymbolID id) {
   return globSymbols[id].GetType() == Type::NONTERMINAL;
 }
 
@@ -39,6 +39,11 @@ Symbol Symbol::Make(const std::string &tag, Type type) {
   return sym;
 }
 
+Symbol::Symbol() :
+    type_(UNKNOWN),
+    id_(0) {
+}
+
 Symbol SymbolTable::GetSymbol(const std::string &tag) {
   return globSymbolTable[tag];
 }
@@ -53,12 +58,12 @@ void SymbolTable::AddSymbol(const Symbol &sym) {
   if (sym.GetType() == Symbol::Type::TERMINAL)
     nTerminals++;
   else if (sym.GetType() == Symbol::Type::NONTERMINAL) {
-    nNonterminals++;
+    nNonTerminals++;
   }
 }
 
 size_t SymbolTable::GetNSymbols() {
-  return nTerminals + nNonterminals;
+  return nTerminals + nNonTerminals;
 }
 
 size_t SymbolTable::GetNTerminals() {
@@ -66,7 +71,7 @@ size_t SymbolTable::GetNTerminals() {
 }
 
 size_t SymbolTable::GetNNonTerminals() {
-  return nNonterminals;
+  return nNonTerminals;
 }
 
 void Symbol::Print() const {

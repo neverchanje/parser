@@ -26,12 +26,15 @@ class Symbol {
   static inline bool IsTerminal(SymbolID id);
 
   // Return true iff the symbol id is non-terminal.
-  static inline bool IsNonterminal(SymbolID id);
+  static inline bool IsNonTerminal(SymbolID id);
 
   static Symbol Make(const std::string &tag, Type type);
 
  public:
 
+  Symbol();
+
+  // Print the symbol in the form of "{ ID: id, TAG: tag }"
   void Print() const;
 
   std::string GetTag() const { return tag_; }
