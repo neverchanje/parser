@@ -3,13 +3,11 @@
 //
 
 #include <vector>
-#include <boost/make_unique.hpp>
 #include "Rule.h"
 
 using namespace parser;
 
 static std::vector<std::unique_ptr<Rule> > globRuleTable;
-static size_t nRules = 0;
 
 const Rule &RuleTable::GetRule(RuleID id) {
   return *globRuleTable[id];
@@ -17,7 +15,11 @@ const Rule &RuleTable::GetRule(RuleID id) {
 
 const Rule &RuleTable::AddRule(std::unique_ptr<Rule> &&pRule) {
   globRuleTable.push_back(pRule.release());
-  return *globRuleTable[nRules++];
+  return *globRuleTable.back();
+}
+
+size_t RuleTable::GetNRule() {
+  return globRuleTable.size();
 }
 
 void Rule::Dump() const {

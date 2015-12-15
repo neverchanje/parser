@@ -21,7 +21,6 @@ class Closure {
 
  private:
 
-  // Creation of Closure is only allowed to use the routine Closure::Make()
   Closure();
 
   std::vector<ItemID> items_;

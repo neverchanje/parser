@@ -22,19 +22,13 @@ class Symbol {
     TERMINAL
   };
 
-  // Total number of terminals.
-  static size_t NTerminals = 0;
-
-  // Total number of non-terminals.
-  static size_t NNonTerminals = 0;
-
   // Return true iff the symbol id is terminal.
   static inline bool IsTerminal(SymbolID id);
 
   // Return true iff the symbol id is non-terminal.
   static inline bool IsNonterminal(SymbolID id);
 
-  static Symbol MakeSymbol(const std::string &tag, Type type);
+  static Symbol Make(const std::string &tag, Type type);
 
  public:
 
@@ -68,6 +62,13 @@ class SymbolTable {
   static Symbol GetSymbol(SymbolID id);
 
   static void AddSymbol(const Symbol &sym);
+
+  static size_t GetNSymbols();
+
+  static size_t GetNTerminals();
+
+  static size_t GetNNonTerminals();
+
 };
 
 } // namespace parser

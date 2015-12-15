@@ -28,6 +28,8 @@ class RuleTable {
 
   static const Rule &AddRule(std::unique_ptr<Rule> &&pRule);
 
+  static size_t GetNRule();
+
 };
 
 
@@ -40,8 +42,8 @@ class Rule {
 
  public:
 
-  static const Rule &MakeRule(SymbolID lhs,
-                              std::array<ItemID, RHSSize> &&rhs) {
+  static const Rule &Make(SymbolID lhs,
+                          std::array<ItemID, RHSSize> &&rhs) {
     return RuleTable::AddRule(std::unique_ptr<Rule>(new Rule(lhs, rhs)));
   }
 

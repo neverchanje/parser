@@ -10,34 +10,33 @@
 using namespace parser;
 
 static std::unordered_map<std::string, Symbol> globSymbolTable;
-static std::vector<Symbol> globTerminals;
-static std::vector<Symbol> globNonTerminals;
+static std::vector<Symbol> globSymbols;
+static size_t nTerminals = 0;
+static size_t nNonterminals = 0;
 
 bool Symbol::IsTerminal(SymbolID id) {
-  return id < NTerminals && id >= 0;
+  return globSymbols[id].GetType() == Type::TERMINAL;
 }
 
 bool Symbol::IsNonterminal(SymbolID id) {
-  return id >= NNonTerminals && id < NTerminals + NNonTerminals;
+  return globSymbols[id].GetType() == Type::NONTERMINAL;
 }
 
 Symbol::Symbol(const std::string &tag,
                Symbol::Type type) :
-    id_(NTerminals),
+    id_(globSymbols.size()),
     tag_(tag),
     type_(type) {
-  if (type == Type::NONTERMINAL)
-    id_ += NONTERMINAL;
 }
 
 // An instance of Symbol is designed to be created by static function,
 // rather than by its constructor, because C++ constructor has not completed
 // the construction of the object, while in the constructor we are adding
 // the symbol into the symbol-table at the same time.
-Symbol Symbol::MakeSymbol(const std::string &tag, Type type) {
+Symbol Symbol::Make(const std::string &tag, Type type) {
   Symbol sym(tag, type);
   SymbolTable::AddSymbol(sym);
-  return sym.
+  return sym;
 }
 
 Symbol SymbolTable::GetSymbol(const std::string &tag) {
@@ -45,27 +44,29 @@ Symbol SymbolTable::GetSymbol(const std::string &tag) {
 }
 
 Symbol SymbolTable::GetSymbol(SymbolID id) {
-  if (Symbol::IsTerminal(id)) {
-    return globTerminals[id];
-  } else if (Symbol::IsNonterminal(id)) {
-    return globNonTerminals[id];
-  } else {
-    fprintf(stderr, "Unregistered ID!");
-    abort();
-  }
+  return globSymbols[id];
 }
 
 void SymbolTable::AddSymbol(const Symbol &sym) {
   globSymbolTable[sym.GetTag()] = sym;
-  if (sym.GetType() == Symbol::Type::NONTERMINAL) {
-    globNonTerminals.push_back(sym);
-    Symbol::NNonTerminals++;
-    assert(Symbol::NNonTerminals == globNonTerminals.size());
-  } else if (sym.GetType() == Symbol::Type::TERMINAL) {
-    globTerminals.push_back(sym);
-    Symbol::NTerminals++;
-    assert(Symbol::NTerminals == globTerminals.size());
+  globSymbols.push_back(sym);
+  if (sym.GetType() == Symbol::Type::TERMINAL)
+    nTerminals++;
+  else if (sym.GetType() == Symbol::Type::NONTERMINAL) {
+    nNonterminals++;
   }
+}
+
+size_t SymbolTable::GetNSymbols() {
+  return nTerminals + nNonterminals;
+}
+
+size_t SymbolTable::GetNTerminals() {
+  return nTerminals;
+}
+
+size_t SymbolTable::GetNNonTerminals() {
+  return nNonterminals;
 }
 
 void Symbol::Print() const {
