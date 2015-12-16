@@ -33,11 +33,11 @@ Symbol::Symbol(const std::string &tag,
 }
 
 const Symbol &Symbol::Make(const std::string &tag, Type type) {
-  return SymbolTable::AddSymbol(boost::make_unique<Symbol>(std::string(tag), type));
+  return SymbolTable::AddSymbol(std::unique_ptr<Symbol>(new Symbol(tag, type)));
 }
 
 Symbol::Symbol() :
-    type_(UNKNOWN),
+    type_(Type::UNKNOWN),
     id_(UNDEFINED_ID) {
 }
 
@@ -72,9 +72,29 @@ size_t SymbolTable::GetNNonTerminals() {
 }
 
 void Symbol::Print() const {
-  fprintf(stdout, "{ ID: %d, TAG: %s }", id_, tag_.c_str());
+  fprintf(stderr, "{ ID: %d, TAG: %s }", id_, tag_.c_str());
 }
 
 void SymbolTable::Pack() {
+  for (const auto &it : globSymbolTable) {
+    const auto &pSym = it.second;
+    Symbol::Type type = pSym->GetType();
+    if (type == Symbol::Type::TERMINAL) {
+      globTerminals.push_back(std::unique_ptr<Symbol>(new Symbol(*pSym)));
+    } else if (type == Symbol::Type::NONTERMINAL) {
+      globNonTerminals.push_back(std::unique_ptr<Symbol>(new Symbol(*pSym)));
+    }
+  }
+}
 
+void SymbolTable::Dump() {
+  fprintf(stderr, "\n------- Begining of dumping the SymbolTable. -------\n");
+  fprintf(stderr, "NTerminals: %lu, NNonTerminals: %lu\n", nTerminals, nNonTerminals);
+  fprintf(stderr, "Symbols: \n");
+  for (const auto &it : globSymbolTable) {
+    const auto &pSym = it.second;
+    pSym->Print();
+    fputs("", stderr);
+  }
+  fprintf(stderr, "------- Ending of dumping the SymbolTable. -------\n");
 }

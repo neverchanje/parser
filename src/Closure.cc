@@ -6,12 +6,12 @@
 
 using namespace parser;
 
-static constexpr const Rule &
+static inline const Rule &
 GetRuleByItem(const Item &item) {
   return RuleTable::GetRule(item.first);
 }
 
-static constexpr const Symbol &
+static inline const Symbol &
 GetSymbolInRuleRHS(const Rule &rule, ItemID item) {
   return SymbolTable::GetSymbol(rule.GetRHS()[item]);
 }

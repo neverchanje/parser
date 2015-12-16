@@ -35,6 +35,7 @@ class Symbol {
  public:
 
   Symbol();
+  Symbol(const Symbol &) = default; // copyable.
 
   // Print the symbol in the form of "{ ID: id, TAG: tag }"
   void Print() const;
@@ -62,19 +63,34 @@ class SymbolTable {
 
  public:
 
+  // Get the symbol by its tag.
   static const Symbol &GetSymbol(const std::string &tag);
 
   static const Symbol &GetSymbol(SymbolID id);
 
+  // Receive a rvalue pointer of symbol created by boost::make_unique,
+  // and insert the symbol into SymbolTable.
   static const Symbol &AddSymbol(std::unique_ptr<Symbol> &&pSym);
 
+  // Return the total number of symbols (terminals + non-terminals).
   static size_t GetNSymbols();
 
+  // Return the total number of terminals.
   static size_t GetNTerminals();
 
+  // Return the total number of non-terminals.
   static size_t GetNNonTerminals();
 
+  // Pack the SymbolTable and each of the Symbol will be marked by a SymbolID.
   static void Pack();
+
+  static void Dump();
+
+ private:
+
+  SymbolTable() = default;
+  SymbolTable(const SymbolTable &) = delete;
+  void operator=(const SymbolTable &) = delete;
 
 };
 
