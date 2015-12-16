@@ -8,13 +8,14 @@
 using namespace parser;
 
 static std::vector<std::unique_ptr<Rule> > globRuleTable;
+static std::vector<SymbolID> globRItems;
 
 const Rule &
-Rule::Make(SymbolID lhs, std::vector<ItemID> &&rhs) {
+Rule::Make(SymbolID lhs, std::vector<SymbolID> &&rhs) {
   return RuleTable::AddRule(std::unique_ptr<Rule>(new Rule(lhs, std::move(rhs))));
 }
 
-Rule::Rule(SymbolID lhs, std::vector<ItemID> &&rhs) :
+Rule::Rule(SymbolID lhs, std::vector<SymbolID> &&rhs) :
     lhs_(lhs),
     rhs_(rhs) {
   rhs_.push_back(0);

@@ -11,19 +11,22 @@
 
 namespace parser {
 
+
 class Closure {
 
  public:
 
-  static Closure Make(const std::vector<ItemID>& I);
+  static Closure Make(const std::vector<Item> &I);
 
   void Dump();
+
+  const std::vector<Item> &GetItems() const { return items_; }
 
  private:
 
   Closure();
 
-  std::vector<ItemID> items_;
+  std::vector<Item> items_;
 
 };
 

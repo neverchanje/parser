@@ -5,61 +5,58 @@
 #include <assert.h>
 #include <unordered_map>
 #include <vector>
+#include <boost/make_unique.hpp>
 #include "Symbol.h"
 
 using namespace parser;
 
-static std::unordered_map<std::string, Symbol> globSymbolTable;
-static std::vector<Symbol> globSymbols;
+static std::unordered_map<std::string, std::unique_ptr<Symbol> > globSymbolTable;
+static std::vector<std::unique_ptr<Symbol> > globTerminals;
+static std::vector<std::unique_ptr<Symbol> > globNonTerminals;
+
 static size_t nTerminals = 0;
 static size_t nNonTerminals = 0;
 
 bool Symbol::IsTerminal(SymbolID id) {
-  return globSymbols[id].GetType() == Type::TERMINAL;
+  return id >= 0 && id < nTerminals;
 }
 
 bool Symbol::IsNonTerminal(SymbolID id) {
-  return globSymbols[id].GetType() == Type::NONTERMINAL;
+  return id >= nTerminals;
 }
 
 Symbol::Symbol(const std::string &tag,
                Symbol::Type type) :
-    id_(globSymbols.size()),
+    id_(UNDEFINED_ID),
     tag_(tag),
     type_(type) {
 }
 
-// An instance of Symbol is designed to be created by static function,
-// rather than by its constructor, because C++ constructor has not completed
-// the construction of the object, while in the constructor we are adding
-// the symbol into the symbol-table at the same time.
-Symbol Symbol::Make(const std::string &tag, Type type) {
-  Symbol sym(tag, type);
-  SymbolTable::AddSymbol(sym);
-  return sym;
+const Symbol &Symbol::Make(const std::string &tag, Type type) {
+  return SymbolTable::AddSymbol(boost::make_unique<Symbol>(std::string(tag), type));
 }
 
 Symbol::Symbol() :
     type_(UNKNOWN),
-    id_(0) {
+    id_(UNDEFINED_ID) {
 }
 
-Symbol SymbolTable::GetSymbol(const std::string &tag) {
-  return globSymbolTable[tag];
+const Symbol &SymbolTable::GetSymbol(const std::string &tag) {
+  return *globSymbolTable[tag];
 }
 
-Symbol SymbolTable::GetSymbol(SymbolID id) {
-  return globSymbols[id];
+const Symbol &SymbolTable::GetSymbol(SymbolID id) {
+  return Symbol::IsTerminal(id) ? *globTerminals[id] : *globNonTerminals[id];
 }
 
-void SymbolTable::AddSymbol(const Symbol &sym) {
-  globSymbolTable[sym.GetTag()] = sym;
-  globSymbols.push_back(sym);
-  if (sym.GetType() == Symbol::Type::TERMINAL)
+const Symbol &SymbolTable::AddSymbol(std::unique_ptr<Symbol> &&pSym) {
+  const auto &pRet = globSymbolTable[pSym->GetTag()] = std::move(pSym);
+  if (pSym->GetType() == Symbol::Type::TERMINAL)
     nTerminals++;
-  else if (sym.GetType() == Symbol::Type::NONTERMINAL) {
+  else if (pSym->GetType() == Symbol::Type::NONTERMINAL) {
     nNonTerminals++;
   }
+  return *pRet;
 }
 
 size_t SymbolTable::GetNSymbols() {
@@ -75,5 +72,9 @@ size_t SymbolTable::GetNNonTerminals() {
 }
 
 void Symbol::Print() const {
-  fprintf(stdout, "{ ID: %lu, TAG: %s }", id_, tag_.c_str());
+  fprintf(stdout, "{ ID: %d, TAG: %s }", id_, tag_.c_str());
+}
+
+void SymbolTable::Pack() {
+
 }

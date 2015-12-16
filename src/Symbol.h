@@ -9,11 +9,13 @@
 
 namespace parser {
 
-typedef size_t SymbolID;
+typedef int SymbolID;
 
 class Symbol {
 
  public:
+
+  const int UNDEFINED_ID = -1;
 
   // Only terminals have a precedence.
   enum Type {
@@ -28,7 +30,7 @@ class Symbol {
   // Return true iff the symbol id is non-terminal.
   static inline bool IsNonTerminal(SymbolID id);
 
-  static Symbol Make(const std::string &tag, Type type);
+  static const Symbol &Make(const std::string &tag, Type type);
 
  public:
 
@@ -60,17 +62,19 @@ class SymbolTable {
 
  public:
 
-  static Symbol GetSymbol(const std::string &tag);
+  static const Symbol &GetSymbol(const std::string &tag);
 
-  static Symbol GetSymbol(SymbolID id);
+  static const Symbol &GetSymbol(SymbolID id);
 
-  static void AddSymbol(const Symbol &sym);
+  static const Symbol &AddSymbol(std::unique_ptr<Symbol> &&pSym);
 
   static size_t GetNSymbols();
 
   static size_t GetNTerminals();
 
   static size_t GetNNonTerminals();
+
+  static void Pack();
 
 };
 

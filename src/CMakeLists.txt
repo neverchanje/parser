@@ -3,7 +3,7 @@ set(PARSER_SRC
 #        LR0.cc
         Symbol.cc
 #        Associativity.cc
-#        Closure.cc
+        Closure.cc
         State.cc
         Rule.cc
 #        Grammar.cc

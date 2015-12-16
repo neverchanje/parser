@@ -15,9 +15,9 @@ namespace parser {
  * See https://en.wikipedia.org/wiki/Production_(computer_science)
  * for the definition of production.
  */
-
-typedef size_t RuleID;
-typedef SymbolID ItemID;
+typedef int RuleID;
+typedef int ItemID;
+typedef std::pair<RuleID, ItemID> Item;
 
 /**
  * Rule:
@@ -27,7 +27,7 @@ class Rule {
 
  public:
 
-  static const Rule &Make(SymbolID lhs, std::vector<ItemID> &&rhs);
+  static const Rule &Make(SymbolID lhs, std::vector<SymbolID> &&rhs);
 
  public:
 
@@ -36,14 +36,18 @@ class Rule {
   // Return the length of the rhs.
   size_t GetRHSSize() const { return rhs_.size(); }
 
+  SymbolID GetLHS() const { return lhs_; }
+
+  const std::vector<SymbolID> &GetRHS() const { return rhs_; }
+
  private:
 
-  Rule(SymbolID lhs, std::vector<ItemID> &&rhs);
+  Rule(SymbolID lhs, std::vector<SymbolID> &&rhs);
 
   SymbolID lhs_;
 
   // +1 for the end symbol $
-  std::vector<ItemID> rhs_;
+  std::vector<SymbolID> rhs_;
 
   RuleID id_;
 
