@@ -11,7 +11,6 @@
 
 namespace parser {
 
-
 class Closure {
 
  public:

@@ -15,6 +15,9 @@ class Symbol {
 
  public:
 
+  // Marks that no id has been assigned to the Symbol.
+  // The Symbol will not own an id until SymbolTable::Pack()
+  // has been processed.
   const int UNDEFINED_ID = -1;
 
   // Only terminals have a precedence.
@@ -43,6 +46,8 @@ class Symbol {
   std::string GetTag() const { return tag_; }
   SymbolID GetID() const { return id_; }
   Type GetType() const { return type_; }
+
+  void SetID(SymbolID id);
 
  private:
 
@@ -81,7 +86,7 @@ class SymbolTable {
   // Return the total number of non-terminals.
   static size_t GetNNonTerminals();
 
-  // Pack the SymbolTable and each of the Symbol will be marked by a SymbolID.
+  // Pack up the SymbolTable and each of the Symbol will be marked by a SymbolID.
   static void Pack();
 
   static void Dump();

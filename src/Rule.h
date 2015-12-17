@@ -61,7 +61,15 @@ class RuleTable {
 
   static const Rule &AddRule(std::unique_ptr<Rule> &&pRule);
 
+  // Return the total number of rules.
   static size_t GetNRule();
+
+  static void SetDerives();
+
+ private:
+
+  RuleTable(const RuleTable &) = delete;
+  void operator=(const RuleTable &) = delete;
 
 };
 

@@ -41,3 +41,7 @@ const Rule &RuleTable::AddRule(std::unique_ptr<Rule> &&pRule) {
 size_t RuleTable::GetNRule() {
   return globRuleTable.size();
 }
+
+void RuleTable::SetDerives() {
+
+}
