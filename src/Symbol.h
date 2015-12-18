@@ -18,7 +18,7 @@ class Symbol {
   // Marks that no id has been assigned to the Symbol.
   // The Symbol will not own an id until SymbolTable::Pack()
   // has been processed.
-  const int UNDEFINED_ID = -1;
+  const SymbolID UNDEFINED_ID = -1;
 
   // Only terminals have a precedence.
   enum Type {
@@ -71,6 +71,7 @@ class SymbolTable {
   // Get the symbol by its tag.
   static const Symbol &GetSymbol(const std::string &tag);
 
+  // Get the symbol by its corresponding SymbolID.
   static const Symbol &GetSymbol(SymbolID id);
 
   // Receive a rvalue pointer of symbol created by boost::make_unique,

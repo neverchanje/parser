@@ -24,6 +24,7 @@ bool Symbol::IsTerminal(SymbolID id) {
 }
 
 bool Symbol::IsNonTerminal(SymbolID id) {
+  assert(id < nTerminals + nNonTerminals);
   return id >= nTerminals;
 }
 
@@ -59,9 +60,9 @@ SymbolTable::AddSymbol(std::unique_ptr<Symbol> &&pSym) {
   std::string tag = pSym->GetTag();
   const auto &pRet = globSymbolTable[std::move(tag)] = std::move(pSym);
 
-  if (pSym->GetType() == Symbol::Type::TERMINAL) {
+  if (pRet->GetType() == Symbol::Type::TERMINAL) {
     nTerminals++;
-  } else if (pSym->GetType() == Symbol::Type::NONTERMINAL) {
+  } else if (pRet->GetType() == Symbol::Type::NONTERMINAL) {
     nNonTerminals++;
   }
   return *pRet;
@@ -91,25 +92,22 @@ void Symbol::SetID(SymbolID id) {
 void SymbolTable::Pack() {
   globTerminals = std::vector<std::unique_ptr<Symbol> >(nTerminals);
   globNonTerminals = std::vector<std::unique_ptr<Symbol> >(nNonTerminals);
-  nTerminals = nNonTerminals = 0;
+  int ntid = 0, tid = 0;
 
   for (auto &it : globSymbolTable) {
     auto &pSym = it.second;
     Symbol::Type type = pSym->GetType();
-    SymbolID id;
 
     if (type == Symbol::Type::TERMINAL) {
-      globTerminals[nTerminals] = std::unique_ptr<Symbol>(new Symbol(*pSym));
-      id = static_cast<int>(nTerminals);
-      globTerminals[nTerminals]->SetID(id);
-      pSym->SetID(id);
-      nTerminals++;
+      globTerminals[tid] = std::unique_ptr<Symbol>(new Symbol(*pSym));
+      globTerminals[tid]->SetID(tid);
+      pSym->SetID(tid);
+      tid++;
     } else if (type == Symbol::Type::NONTERMINAL) {
-      globNonTerminals[nNonTerminals] = std::unique_ptr<Symbol>(new Symbol(*pSym));
-      id = static_cast<int>(nNonTerminals);
-      globNonTerminals[nNonTerminals]->SetID(id);
-      pSym->SetID(id);
-      nNonTerminals++;
+      globNonTerminals[ntid] = std::unique_ptr<Symbol>(new Symbol(*pSym));
+      globNonTerminals[ntid]->SetID(ntid + nTerminals);
+      pSym->SetID(ntid + nTerminals);
+      ntid++;
     }
   }
 }
@@ -121,7 +119,7 @@ void SymbolTable::Dump() {
   for (const auto &it : globSymbolTable) {
     const auto &pSym = it.second;
     pSym->Print();
-    fputs("", stderr);
+    fprintf(stderr, "\n");
   }
   fprintf(stderr, "------- Ending of dumping the SymbolTable. -------\n");
 }
