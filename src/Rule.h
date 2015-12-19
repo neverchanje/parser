@@ -34,11 +34,15 @@ class Rule {
   void Dump() const;
 
   // Return the length of the rhs.
-  size_t GetRHSSize() const { return rhs_.size(); }
+  size_t GetRHSSize() const { return rhssize_; }
 
   SymbolID GetLHS() const { return lhs_; }
 
-  const std::vector<SymbolID> &GetRHS() const { return rhs_; }
+  // Return the nth SymbolID in the right hand side of the Rule.
+  // n is ranging from 0 to rhssize-1;
+  SymbolID GetRHS(size_t n) const;
+
+  RuleID GetID() const { return id_; }
 
  private:
 
@@ -46,13 +50,14 @@ class Rule {
 
   SymbolID lhs_;
 
-  // +1 for the end symbol $
-  std::vector<SymbolID> rhs_;
+  size_t rhs_offset_;
+  size_t rhssize_;
 
   RuleID id_;
 
 };
 
+// RuleTable is a singleton class.
 class RuleTable {
 
  public:
@@ -64,10 +69,15 @@ class RuleTable {
   // Return the total number of rules.
   static size_t GetNRule();
 
-  static void SetDerives();
+  // (DEBUG) Print out all of the rules in the RuleTable.
+  static void Dump();
+
+  // (DEBUG) Clear up the RuleTable.
+  static void Clear();
 
  private:
 
+  RuleTable() = default;
   RuleTable(const RuleTable &) = delete;
   void operator=(const RuleTable &) = delete;
 

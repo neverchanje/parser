@@ -18,7 +18,7 @@ class Symbol {
   // Marks that no id has been assigned to the Symbol.
   // The Symbol will not own an id until SymbolTable::Pack()
   // has been processed.
-  const SymbolID UNDEFINED_ID = -1;
+  static const SymbolID UNDEFINED_ID = -1;
 
   // Only terminals have a precedence.
   enum Type {
@@ -34,6 +34,9 @@ class Symbol {
   static inline bool IsNonTerminal(SymbolID id);
 
   static const Symbol &Make(const std::string &tag, Type type);
+
+  // end-of-rule symbol
+  static const Symbol &EOR();
 
  public:
 
@@ -88,9 +91,15 @@ class SymbolTable {
   static size_t GetNNonTerminals();
 
   // Pack up the SymbolTable and each of the Symbol will be marked by a SymbolID.
+  // We have to do this, in order to dividing the symbols into two groups, terminals
+  // and non-terminals.
   static void Pack();
 
+  // (DEBUG) Print out all of the symbols in the SymbolTable.
   static void Dump();
+
+  // (DEBUG) Clear up the SymbolTable.
+  static void Clear();
 
  private:
 

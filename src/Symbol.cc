@@ -18,6 +18,7 @@ static std::vector<std::unique_ptr<Symbol> > globNonTerminals;
 
 static size_t nTerminals = 0;
 static size_t nNonTerminals = 0;
+static bool hasEOR = false;
 
 bool Symbol::IsTerminal(SymbolID id) {
   return id >= 0 && id < nTerminals;
@@ -45,6 +46,24 @@ Symbol::Symbol() :
     id_(UNDEFINED_ID) {
 }
 
+void Symbol::Print() const {
+  fprintf(stderr, "{ ID: %d, TAG: %s }", id_, tag_.c_str());
+}
+
+const Symbol &Symbol::EOR() {
+  if (hasEOR) {
+    return *globSymbolTable["$"];
+  } else {
+    hasEOR = true;
+    return Make("$", Type::TERMINAL);
+  }
+}
+
+void Symbol::SetID(SymbolID id) {
+  assert(id_ == UNDEFINED_ID);
+  id_ = id;
+}
+
 const Symbol &
 SymbolTable::GetSymbol(const std::string &tag) {
   return *globSymbolTable[tag];
@@ -52,7 +71,7 @@ SymbolTable::GetSymbol(const std::string &tag) {
 
 const Symbol &
 SymbolTable::GetSymbol(SymbolID id) {
-  return Symbol::IsTerminal(id) ? *globTerminals[id] : *globNonTerminals[id];
+  return Symbol::IsTerminal(id) ? *globTerminals[id] : *globNonTerminals[id - nTerminals];
 }
 
 const Symbol &
@@ -80,15 +99,6 @@ size_t SymbolTable::GetNNonTerminals() {
   return nNonTerminals;
 }
 
-void Symbol::Print() const {
-  fprintf(stderr, "{ ID: %d, TAG: %s }", id_, tag_.c_str());
-}
-
-void Symbol::SetID(SymbolID id) {
-  assert(id_ == UNDEFINED_ID);
-  id_ = id;
-}
-
 void SymbolTable::Pack() {
   globTerminals = std::vector<std::unique_ptr<Symbol> >(nTerminals);
   globNonTerminals = std::vector<std::unique_ptr<Symbol> >(nNonTerminals);
@@ -110,6 +120,7 @@ void SymbolTable::Pack() {
       ntid++;
     }
   }
+  assert(tid == nTerminals && ntid == nNonTerminals);
 }
 
 void SymbolTable::Dump() {
@@ -122,4 +133,13 @@ void SymbolTable::Dump() {
     fprintf(stderr, "\n");
   }
   fprintf(stderr, "------- Ending of dumping the SymbolTable. -------\n");
+}
+
+void SymbolTable::Clear() {
+  globSymbolTable.clear();
+  globTerminals.clear();
+  globNonTerminals.clear();
+  hasEOR = false;
+  nNonTerminals = 0;
+  nTerminals = 0;
 }
