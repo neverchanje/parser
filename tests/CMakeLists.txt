@@ -12,3 +12,11 @@ add_executable(Rule_unittest
         ${PARSER_SOURCE_DIR}/Symbol.cc
         )
 target_link_libraries(Rule_unittest gtest gtest_main)
+
+add_executable(Closure_unittest
+        Closure_unittest.cc
+        ${PARSER_SOURCE_DIR}/Rule.cc
+        ${PARSER_SOURCE_DIR}/Symbol.cc
+        ${PARSER_SOURCE_DIR}/Closure.cc
+        )
+target_link_libraries(Closure_unittest gtest gtest_main)

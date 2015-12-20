@@ -72,3 +72,8 @@ void RuleTable::Clear() {
   globRItems.clear();
   SymbolTable::Clear();
 }
+
+const std::vector<RuleID> &
+RuleTable::GetDerives(SymbolID sym) {
+  return globDerives[sym];
+}

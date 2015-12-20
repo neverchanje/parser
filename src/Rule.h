@@ -16,8 +16,6 @@ namespace parser {
  * for the definition of production.
  */
 typedef int RuleID;
-typedef int ItemID;
-typedef std::pair<RuleID, ItemID> Item;
 
 /**
  * Rule:
@@ -68,6 +66,8 @@ class RuleTable {
 
   // Return the total number of rules.
   static size_t GetNRule();
+
+  static const std::vector<RuleID> &GetDerives(SymbolID sym);
 
   // (DEBUG) Print out all of the rules in the RuleTable.
   static void Dump();

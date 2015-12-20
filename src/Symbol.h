@@ -28,10 +28,10 @@ class Symbol {
   };
 
   // Return true iff the symbol id is terminal.
-  static inline bool IsTerminal(SymbolID id);
+  static bool IsTerminal(SymbolID id);
 
   // Return true iff the symbol id is non-terminal.
-  static inline bool IsNonTerminal(SymbolID id);
+  static bool IsNonTerminal(SymbolID id);
 
   static const Symbol &Make(const std::string &tag, Type type);
 
