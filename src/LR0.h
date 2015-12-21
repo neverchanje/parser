@@ -11,6 +11,12 @@ namespace LR0 {
 
 class Automaton {
 
+ public:
+
+  static Automaton Make();
+
+  void Dump();
+
 };
 
 } // namespace LR0
