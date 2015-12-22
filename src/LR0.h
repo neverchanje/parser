@@ -5,7 +5,12 @@
 #ifndef PARSER_LR0_H
 #define PARSER_LR0_H
 
+#include "DFA.h"
+
 namespace parser {
+
+class ItemSet;
+typedef int RuleID;
 
 namespace LR0 {
 
@@ -13,9 +18,16 @@ class Automaton {
 
  public:
 
-  static Automaton Make();
+  // Construct a LR(0) parsing table by a given initial rule.
+  static Automaton Make(RuleID init);
 
   void Dump();
+
+ private:
+
+  Automaton() = default;
+
+  DFA dfa_;
 
 };
 

@@ -4,6 +4,8 @@
 
 #include <gtest/gtest.h>
 #include "Closure.h"
+#include "Symbol.h"
+#include "Rule.h"
 
 using namespace parser;
 
@@ -49,7 +51,7 @@ class ClosureBasic1: public ::testing::Test {
 
 TEST_F(ClosureBasic1, ClosureBasic1_Test1) {
   // E -> •E + T
-  Closure clsr = Closure::Make({MakeItem(r1, 0)});
+  ItemSet clsr = Closure({MakeItem(r1, 0)});
 
 //  T -> •T multiply F $
 //  F -> •id $
@@ -57,19 +59,19 @@ TEST_F(ClosureBasic1, ClosureBasic1_Test1) {
 //  F -> •left_bracket E right_bracket $
 //  T -> •F $
 //  E -> •E plus T $
-  clsr.Dump();
+  DumpClosure(clsr);
 }
 
 TEST_F(ClosureBasic1, ClosureBasic1_Test2) {
   // E -> E + •T
-  Closure clsr = Closure::Make({MakeItem(r1, 2)});
+  ItemSet clsr = Closure({MakeItem(r1, 2)});
 
 //  F -> •id $
 //  T -> •T multiply F $
 //  F -> •left_bracket E right_bracket $
 //  T -> •F $
 //  E -> E plus •T $
-  clsr.Dump();
+  DumpClosure(clsr);
 }
 
 class ClosureBasic2: public ::testing::Test {
@@ -118,7 +120,7 @@ class ClosureBasic2: public ::testing::Test {
 
 TEST_F(ClosureBasic2, ClosureBasic2_Test1) {
   // S_ -> •S
-  Closure clsr = Closure::Make({MakeItem(r1, 0)});
+  ItemSet clsr = Closure({MakeItem(r1, 0)});
 
 //  S -> •L = R $
 //  R -> •L $
@@ -126,5 +128,5 @@ TEST_F(ClosureBasic2, ClosureBasic2_Test1) {
 //  L -> •* R $
 //  L -> •id $
 //  S -> •R $
-  clsr.Dump();
+  DumpClosure(clsr);
 }

@@ -5,17 +5,18 @@
 #include <algorithm>
 #include <unordered_set>
 #include "Closure.h"
+#include "Rule.h"
 
 using namespace parser;
 
-Closure Closure::Make(std::vector<Item> &&I) {
-  Closure clsr;
+ItemSet parser::Closure(std::vector<Item> &&I) {
+  ItemSet clsr;
   std::unordered_set<SymbolID> symset;
 
   while (!I.empty()) {
     auto it = I.back();
     I.pop_back();
-    clsr.items_.insert(it);
+    clsr.insert(it);
 
     SymbolID sid = RuleTable::GetRule(it.first).GetRHS(it.second);
 
@@ -34,9 +35,9 @@ Closure Closure::Make(std::vector<Item> &&I) {
 #define RULE_RHS_SYMBOL_TAG(rule, i) (SymbolTable::GetSymbol((rule).GetRHS((i))).GetTag().c_str())
 #define RULE_LHS_SYMBOL_TAG(rule)    (SymbolTable::GetSymbol((rule).GetLHS()).GetTag().c_str())
 
-void Closure::Dump() {
+void parser::DumpClosure(const ItemSet &clsr) {
   fprintf(stderr, "\n------- Beginning of dumping the Closure. -------\n");
-  for (auto &it : items_) {
+  for (auto &it : clsr) {
     const Rule &rule = RuleTable::GetRule(it.first);
 
     fprintf(stderr, "%s -> ", RULE_LHS_SYMBOL_TAG(rule));
@@ -50,7 +51,6 @@ void Closure::Dump() {
     fprintf(stderr, "\n");
   }
   fprintf(stderr, "------- Ending of dumping the Closure. -------\n");
-
 }
 
 #undef RULE_RHS_SYMBOL_TAG

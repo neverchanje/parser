@@ -6,44 +6,14 @@
 #define PARSER_CLOSURE_H
 
 #include <vector>
-#include <unordered_set>
-#include <boost/functional/hash.hpp>
 
-#include "Rule.h"
+#include "Item.h"
 
 namespace parser {
 
-typedef std::pair<RuleID, size_t> Item;
+ItemSet Closure(std::vector<Item> &&I);
 
-struct ItemHasher {
-  size_t operator()(const Item &val) const {
-    return boost::hash_value(val);
-  }
-};
-
-typedef std::unordered_set<Item, ItemHasher> ItemSet;
-
-inline Item MakeItem(RuleID rule, size_t offset) {
-  return std::make_pair<RuleID, size_t>(RuleID(rule), size_t(offset));
-}
-
-class Closure {
-
- public:
-
-  static Closure Make(std::vector<Item> &&I);
-
-  void Dump();
-
-  const ItemSet &GetItems() const { return items_; }
-
- private:
-
-  Closure() = default;
-
-  ItemSet items_;
-
-};
+void DumpClosure(const ItemSet &clsr);
 
 } // namespace parser
 
