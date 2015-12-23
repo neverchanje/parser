@@ -10,6 +10,8 @@
 using namespace parser;
 
 TEST(LR0_Basics, LR0_Basics_Test) {
+  RuleTable::Clear();
+
   Symbol::Make("S", Symbol::Type::NONTERMINAL);
   Symbol::Make("S_", Symbol::Type::NONTERMINAL);
   Symbol::Make("L", Symbol::Type::NONTERMINAL);

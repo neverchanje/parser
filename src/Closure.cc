@@ -17,7 +17,6 @@ ItemSet Closure(std::vector<Item> &&I) {
     auto it = I.back();
     I.pop_back();
     clsr.insert(it);
-    RuleTable::GetRule(it.first).Dump();
 
     SymbolID sid = RuleTable::GetRule(it.first).GetRHS(it.second);
 
@@ -43,4 +42,5 @@ void DumpClosure(const ItemSet &clsr) {
   }
   fprintf(stderr, "------- Ending of dumping the Closure. -------\n");
 }
+
 } // namespace parser

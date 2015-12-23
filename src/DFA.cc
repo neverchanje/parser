@@ -25,12 +25,14 @@ State DFA::GetTrans(State from, SymbolID sym) const {
 }
 
 void DFA::Dump() const {
+  fprintf(stderr, "\n------- Begining of dumping the DFA. -------\n");
   for (auto t1 = trans_.begin(); t1 != trans_.end(); t1++) {
     for (auto t2 = (*t1).second.begin(); t2 != (*t1).second.end(); t2++) {
       fprintf(stderr, "<from:%d, sym:%d, to:%d>\n",
               (*t1).first, (*t2).first, (*t2).second);
     }
   }
+  fprintf(stderr, "------- Ending of dumping the DFA. -------\n");
 }
 
 } // namespace parser

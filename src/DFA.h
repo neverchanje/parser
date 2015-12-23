@@ -39,8 +39,12 @@ class DFA {
 
   State GetTrans(State, SymbolID sym) const;
 
-  // Debugging method to write out all of the transitions in the DFA.
+  // (DEBUG) Write out all of the transitions in the DFA.
   void Dump() const;
+
+  // (DEBUG) Return the internal transition table.
+  const std::unordered_map<State, std::unordered_map<SymbolID, State> > &
+  GetTransTable() const { return trans_; };
 
  private:
 

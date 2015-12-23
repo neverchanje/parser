@@ -20,7 +20,7 @@ class Automaton {
   // Construct a LR(0) parsing table by a given initial rule init.
   static Automaton Make(RuleID init);
 
-  void Dump();
+  void Dump() const;
 
  private:
 

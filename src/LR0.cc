@@ -45,7 +45,7 @@ Automaton Automaton::Make(RuleID init) {
 
     for (auto &it : I) {
       const Rule &rule = RuleTable::GetRule(it.first);
-      if (rule.GetRHSSize() <= it.second + 1) {
+      if (rule.GetRHSSize() <= it.second) {
         continue;
       }
       // There's an X exists so that item A -> a •X b is in ItemSet I
@@ -59,13 +59,24 @@ Automaton Automaton::Make(RuleID init) {
     }
 
     que.pop();
+    break;
   }
 
   return atm;
 }
 
-void Automaton::Dump() {
-  dfa_.Dump();
+void Automaton::Dump() const {
+  const auto &trans = dfa_.GetTransTable();
+  fprintf(stderr, "\n------- Begining of dumping the LR0. -------\n");
+  for (auto t1 = trans.begin(); t1 != trans.end(); t1++) {
+    for (auto t2 = (*t1).second.begin(); t2 != (*t1).second.end(); t2++) {
+      fprintf(stderr, "<from:%d, sym:%s, to:%d>\n",
+              (*t1).first,
+              SymbolTable::GetSymbol((*t2).first).GetTag().c_str(),
+              (*t2).second);
+    }
+  }
+  fprintf(stderr, "------- Ending of dumping the LR0. -------\n");
 }
 
 } // namespace LR0
