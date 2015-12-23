@@ -60,9 +60,14 @@ size_t RuleTable::GetNRule() {
 
 void RuleTable::Dump() {
   fprintf(stderr, "\n------- Beginning of dumping the RuleTable. -------\n");
-  for (auto &it : globRuleTable) {
-    it->Dump();
+
+  for (auto &entry : globDerives) {
+    SymbolID lhs = entry.first;
+    for (auto &ruleid : entry.second) {
+      RuleTable::GetRule(ruleid).Dump();
+    }
   }
+
   fprintf(stderr, "------- Ending of dumping the RuleTable. -------\n");
 }
 

@@ -25,7 +25,7 @@ TEST(Rule_Basics, Rule_Basics_Test) {
 
 //  NTerminals: 6, NNonTerminals: 3
 //  Symbols:
-//  { ID: 0, TAG: EOR }
+//  { ID: 0, TAG: $ }
 //  { ID: 1, TAG: id }
 //  { ID: 2, TAG: right_bracket }
 //  { ID: 3, TAG: left_bracket }
@@ -59,11 +59,11 @@ TEST(Rule_Basics, Rule_Basics_Test) {
   Rule::Make(F, {left_bracket, E, right_bracket});
   Rule::Make(F, {id});
 
-//  E -> E plus T $
-//  E -> T $
-//  T -> T multiply F $
-//  T -> F $
 //  F -> left_bracket E right_bracket $
 //  F -> id $
+//  T -> T multiply F $
+//  T -> F $
+//  E -> E plus T $
+//  E -> T $
   RuleTable::Dump();
 }

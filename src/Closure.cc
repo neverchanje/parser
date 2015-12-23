@@ -7,19 +7,21 @@
 #include "Closure.h"
 #include "Rule.h"
 
-using namespace parser;
+namespace parser {
 
-ItemSet parser::Closure(std::vector<Item> &&I) {
+ItemSet Closure(std::vector<Item> &&I) {
   ItemSet clsr;
-  std::unordered_set<SymbolID> symset;
+  std::unordered_set<SymbolID> symset; // use bitset ?
 
   while (!I.empty()) {
     auto it = I.back();
     I.pop_back();
     clsr.insert(it);
+    RuleTable::GetRule(it.first).Dump();
 
     SymbolID sid = RuleTable::GetRule(it.first).GetRHS(it.second);
 
+    // Expand the non-terminal sid and check it has not been expanded.
     if (Symbol::IsNonTerminal(sid) && symset.find(sid) == symset.end()) {
       const auto &derives = RuleTable::GetDerives(sid);
       for (RuleID r : derives) {
@@ -32,26 +34,13 @@ ItemSet parser::Closure(std::vector<Item> &&I) {
   return clsr;
 }
 
-#define RULE_RHS_SYMBOL_TAG(rule, i) (SymbolTable::GetSymbol((rule).GetRHS((i))).GetTag().c_str())
-#define RULE_LHS_SYMBOL_TAG(rule)    (SymbolTable::GetSymbol((rule).GetLHS()).GetTag().c_str())
 
-void parser::DumpClosure(const ItemSet &clsr) {
+void DumpClosure(const ItemSet &clsr) {
   fprintf(stderr, "\n------- Beginning of dumping the Closure. -------\n");
   for (auto &it : clsr) {
-    const Rule &rule = RuleTable::GetRule(it.first);
-
-    fprintf(stderr, "%s -> ", RULE_LHS_SYMBOL_TAG(rule));
-    for (size_t i = 0; i < it.second; ++i) {
-      fprintf(stderr, "%s ", RULE_RHS_SYMBOL_TAG(rule, i));
-    }
-    fprintf(stderr, "•%s", RULE_RHS_SYMBOL_TAG(rule, it.second));
-    for (size_t i = it.second + 1; i < rule.GetRHSSize(); ++i) {
-      fprintf(stderr, " %s", RULE_RHS_SYMBOL_TAG(rule, i));
-    }
+    PrintItem(it);
     fprintf(stderr, "\n");
   }
   fprintf(stderr, "------- Ending of dumping the Closure. -------\n");
 }
-
-#undef RULE_RHS_SYMBOL_TAG
-#undef RULE_LHS_SYMBOL_TAG
+} // namespace parser

@@ -8,6 +8,8 @@
 
 namespace parser {
 
+typedef int SymbolID;
+
 /**
  * Deterministic Finite Automaton
  */
@@ -16,7 +18,6 @@ class DFA {
  public:
 
   typedef int State;
-  typedef int Sym;
 
   static const State START_STATE = 0;
 
@@ -32,18 +33,18 @@ class DFA {
 
   State MakeState() { return maxStateId_++; }
 
-  void AddTrans(State from, Sym sym, State to);
+  void AddTrans(State from, SymbolID sym, State to);
 
-  bool HasTrans(State from, Sym sym) const;
+  bool HasTrans(State from, SymbolID sym) const;
 
-  State GetTrans(State, Sym sym) const;
+  State GetTrans(State, SymbolID sym) const;
 
   // Debugging method to write out all of the transitions in the DFA.
   void Dump() const;
 
  private:
 
-  std::unordered_map<State, std::unordered_map<Sym, State> > trans_;
+  std::unordered_map<State, std::unordered_map<SymbolID, State> > trans_;
 
   State start_;
 

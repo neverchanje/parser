@@ -5,8 +5,8 @@
 #ifndef PARSER_ITEM_H
 #define PARSER_ITEM_H
 
-#include <unordered_set>
-#include <boost/functional/hash.hpp>
+#include <set>
+#include "Rule.h"
 
 namespace parser {
 
@@ -18,13 +18,21 @@ inline Item MakeItem(RuleID rule, size_t offset) {
   return std::make_pair<RuleID, size_t>(RuleID(rule), size_t(offset));
 }
 
-struct ItemHasher {
-  size_t operator()(const Item &val) const {
-    return boost::hash_value(val);
+struct ItemSetSort {
+// Each item A -> a •X b in ItemSet I are sorted by X in ascending order,
+// so that items can be grouped by different X.
+  inline bool operator()(const Item &i1, const Item &i2) const {
+    SymbolID x1 = RuleTable::GetRule(i1.first).GetRHS(i1.second);
+    SymbolID x2 = RuleTable::GetRule(i2.first).GetRHS(i2.second);
+    if (x1 == x2)
+      return i1 < i2;
+    return x1 < x2;
   }
 };
 
-typedef std::unordered_set<Item, ItemHasher> ItemSet;
+void PrintItem(const Item &item);
+
+typedef std::set<Item, ItemSetSort> ItemSet;
 
 } // namespace parser
 

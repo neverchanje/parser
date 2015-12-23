@@ -9,7 +9,6 @@
 
 namespace parser {
 
-class ItemSet;
 typedef int RuleID;
 
 namespace LR0 {
@@ -18,7 +17,7 @@ class Automaton {
 
  public:
 
-  // Construct a LR(0) parsing table by a given initial rule.
+  // Construct a LR(0) parsing table by a given initial rule init.
   static Automaton Make(RuleID init);
 
   void Dump();

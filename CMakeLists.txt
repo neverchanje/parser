@@ -11,7 +11,7 @@ set(CXX_FLAGS
         -Wall
         -Wold-style-cast #warn if C-style implicit-casting occurs
         -Wconversion
-)
+        )
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0")

@@ -13,7 +13,7 @@ ItemSet GoTo(const ItemSet &I, SymbolID X) {
   for (auto &it : I) {
     sid = RuleTable::GetRule(it.first).GetRHS(it.second);
     if (sid == X) {
-      ret.insert(MakeItem(it.first, it.second + 1);
+      ret.insert(MakeItem(it.first, it.second + 1));
     }
   }
   return ret;
