@@ -17,7 +17,7 @@ void PrintItem(const Item &it) {
     fprintf(stderr, "%s ", RULE_RHS_SYMBOL_TAG(rule, i));
   }
   fprintf(stderr, "•%s", RULE_RHS_SYMBOL_TAG(rule, it.second));
-  for (size_t i = it.second + 1; i < rule.GetRHSSize(); ++i) {
+  for (size_t i = it.second + 1; i < rule.GetRHSSize() + 1; ++i) {
     fprintf(stderr, " %s", RULE_RHS_SYMBOL_TAG(rule, i));
   }
 }

@@ -28,7 +28,7 @@ Rule::Make(SymbolID lhs, std::vector<SymbolID> &&rhs) {
 
 Rule::Rule(SymbolID lhs, std::vector<SymbolID> &&rhs) :
     lhs_(lhs),
-    rhssize_(rhs.size() + 1), // +1 for EOR
+    rhssize_(rhs.size()),
     rhs_offset_(globRItems.size()),
     id_(maxRuleID++) {
 }
@@ -39,7 +39,7 @@ SymbolID Rule::GetRHS(size_t n) const {
 
 void Rule::Dump() const {
   std::string ostr = SymbolTable::GetSymbol(lhs_).GetTag() + " ->";
-  for (size_t i = 0; i < rhssize_; ++i) {
+  for (size_t i = 0; i < rhssize_ + 1; ++i) { // +1 for EOR
     ostr += " " + SymbolTable::GetSymbol(GetRHS(i)).GetTag();
   }
   fprintf(stderr, "%s\n", ostr.c_str());

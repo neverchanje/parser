@@ -3,8 +3,9 @@
 //
 
 #include <vector>
-#include <boost/make_unique.hpp>
 #include <queue>
+#include <unordered_map>
+#include <boost/functional/hash.hpp>
 #include "LR0.h"
 #include "Closure.h"
 
@@ -16,50 +17,76 @@ static inline std::vector<Item> itemSetToVector(const ItemSet &I) {
   return std::vector<Item>(I.begin(), I.end());
 }
 
-typedef std::pair<DFA::State, std::unique_ptr<ItemSet> > StateMap;
+//typedef std::pair<ItemSet, DFA::State> ItemState;
 
-static StateMap inline makeStateMap(DFA::State state) {
-  return std::make_pair(state, boost::make_unique<ItemSet>());
+struct ItemSetHasher {
+  size_t operator()(const ItemSet &val) const {
+    return boost::hash_value(val);
+  }
+};
+
+typedef std::unordered_map<ItemSet, DFA::State, ItemSetHasher> StateTable;
+
+#define QBACK_ISET(que) (que.back()->first)
+#define QBACK_STATE(que) (que.back()->second)
+#define QFRONT_ISET(que) (que.front()->first)
+#define QFRONT_STATE(que) (que.front()->second)
+
+static inline std::pair<StateTable::iterator, bool>
+insertInTable(StateTable &table, ItemSet &&iset, DFA::State &&state) {
+  return table.insert(std::make_pair(iset, state));
 }
-
-#define QBACK_ISET(que) (*(que.back().second))
-#define QBACK_STATE(que) ((que.back().first))
-#define QFRONT_ISET(que) (*(que.front().second))
-#define QFRONT_STATE(que) ((que.front().first))
 
 Automaton Automaton::Make(RuleID init) {
   Automaton atm;
-  std::queue<StateMap> que;
-  SymbolID X, prev;
-  ItemSet clsr;
 
-  que.push(makeStateMap(DFA::START_STATE));
-  QBACK_ISET(que).insert(MakeItem(init, 0));
+  //Each ItemSet in stateSet contains only kernel items.
+  StateTable table;
+  std::queue<StateTable::iterator> que;
+  SymbolID X, Y;
+  ItemSet clsr, tmp;
+  std::pair<StateTable::iterator, bool> ret;
+
+  ret = insertInTable(table, {MakeItem(init, 0)}, DFA::State(DFA::START_STATE));
+  que.push(ret.first);
 
   while (!que.empty()) {
-    auto &I = QFRONT_ISET(que); // I contains only kernel items.
+    const auto &I = QFRONT_ISET(que); // I contains only kernel items.
     clsr = Closure(itemSetToVector(I));
-    I.insert(clsr.begin(), clsr.end());
+    DumpClosure(clsr);
+    tmp.clear();
 
-    prev = -1;
-
-    for (auto &it : I) {
-      const Rule &rule = RuleTable::GetRule(it.first);
-      if (rule.GetRHSSize() <= it.second) {
+    for (auto i = clsr.begin(); i != clsr.end(); i++) {
+      const Rule &rule = RuleTable::GetRule(i->first);
+      if (rule.GetRHSSize() <= i->second) { // hit the end
         continue;
       }
+
       // There's an X exists so that item A -> a •X b is in ItemSet I
-      X = rule.GetRHS(it.second);
-      if (X != prev) {
-        que.push(makeStateMap(atm.dfa_.MakeState()));
-        atm.dfa_.AddTrans(QFRONT_STATE(que), X, QBACK_STATE(que));
-        prev = X;
+      X = rule.GetRHS(i->second);
+
+      // Y is the next symbol id
+      // If X exists, then Y must exist.
+      if (std::next(i) == clsr.end()) {
+        Y = -1;
+      } else {
+        auto ni = std::next(i);
+        Y = RuleTable::GetRule(ni->first).GetRHS(ni->second);
       }
-      QBACK_ISET(que).insert(MakeItem(it.first, it.second + 1));
+
+      tmp.insert(MakeItem(i->first, i->second + 1));
+      if (X != Y) {
+        ret = insertInTable(table, std::move(tmp), -1);
+        if (ret.second) {
+          ret.first->second = atm.dfa_.MakeState();
+          que.push(ret.first);
+        }
+        atm.dfa_.AddTrans(QFRONT_STATE(que), X, ret.first->second);
+        tmp.clear();
+      }
     }
 
     que.pop();
-    break;
   }
 
   return atm;
