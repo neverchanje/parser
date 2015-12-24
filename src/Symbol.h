@@ -22,7 +22,6 @@ class Symbol {
 
   // Only terminals have a precedence.
   enum Type {
-    UNKNOWN,
     NONTERMINAL,
     TERMINAL
   };
@@ -37,6 +36,8 @@ class Symbol {
 
   // end-of-rule symbol
   static const Symbol &EOR();
+
+  static const Symbol &Epsilon();
 
  public:
 

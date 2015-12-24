@@ -21,15 +21,17 @@ TEST(Symbol_Basics, Symbol_Basics_Test) {
 
   SymbolTable::Pack();
 
-//  NTerminals: 4, NNonTerminals: 3
+//  NTerminals: 6, NNonTerminals: 3
 //  Symbols:
-//  { ID: 4, TAG: WhileStatement }
+//  { ID: 6, TAG: WhileStatement }
 //  { ID: 0, TAG: Else }
-//  { ID: 5, TAG: Statement }
+//  { ID: 7, TAG: Statement }
 //  { ID: 1, TAG: If }
-//  { ID: 6, TAG: Expression }
-//  { ID: 2, TAG: Comma }
-//  { ID: 3, TAG: Blank }
+//  { ID: 2, TAG: $ }
+//  { ID: 8, TAG: Expression }
+//  { ID: 3, TAG: Comma }
+//  { ID: 4, TAG: ε }
+//  { ID: 5, TAG: Blank }
   SymbolTable::Dump();
 }
 
@@ -48,15 +50,17 @@ TEST(Symbol_Basics2, Symbol_Basics_Test) {
 
   SymbolTable::Pack();
 
-//  NTerminals: 5, NNonTerminals: 3
+//  NTerminals: 7, NNonTerminals: 3
 //  Symbols:
-//  { ID: 0, TAG: id }
-//  { ID: 1, TAG: right_bracket }
-//  { ID: 2, TAG: left_bracket }
-//  { ID: 3, TAG: plus }
-//  { ID: 5, TAG: F }
-//  { ID: 4, TAG: multiply }
-//  { ID: 6, TAG: T }
-//  { ID: 7, TAG: E }
+//  { ID: 0, TAG: $ }
+//  { ID: 1, TAG: ε }
+//  { ID: 2, TAG: id }
+//  { ID: 3, TAG: right_bracket }
+//  { ID: 4, TAG: left_bracket }
+//  { ID: 5, TAG: plus }
+//  { ID: 7, TAG: F }
+//  { ID: 6, TAG: multiply }
+//  { ID: 8, TAG: T }
+//  { ID: 9, TAG: E }
   SymbolTable::Dump();
 }

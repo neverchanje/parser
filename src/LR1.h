@@ -5,7 +5,11 @@
 #ifndef PARSER_LR1_H
 #define PARSER_LR1_H
 
-namespace LR0 {
+#include "DFA.h"
+
+namespace parser {
+
+namespace LR1 {
 
 class Automaton {
 
@@ -15,9 +19,16 @@ class Automaton {
 
   void Dump();
 
+ private:
+
+  Automaton() = default;
+
+  DFA dfa;
+
 };
 
-} // namespace LR0
+} // namespace LR1
 
+} // namespace parser
 
 #endif //PARSER_LR1_H

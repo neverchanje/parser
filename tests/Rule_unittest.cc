@@ -19,21 +19,21 @@ TEST(Rule_Basics, Rule_Basics_Test) {
   Symbol::Make("left_bracket", Symbol::Type::TERMINAL);
   Symbol::Make("right_bracket", Symbol::Type::TERMINAL);
   Symbol::Make("id", Symbol::Type::TERMINAL);
-  Symbol::EOR();
 
   SymbolTable::Pack();
 
-//  NTerminals: 6, NNonTerminals: 3
+//  NTerminals: 7, NNonTerminals: 3
 //  Symbols:
-//  { ID: 0, TAG: $ }
-//  { ID: 1, TAG: id }
-//  { ID: 2, TAG: right_bracket }
-//  { ID: 3, TAG: left_bracket }
-//  { ID: 6, TAG: T }
-//  { ID: 4, TAG: multiply }
-//  { ID: 7, TAG: F }
-//  { ID: 5, TAG: plus }
-//  { ID: 8, TAG: E }
+//  { ID: 0, TAG: ε }
+//  { ID: 1, TAG: $ }
+//  { ID: 2, TAG: id }
+//  { ID: 3, TAG: right_bracket }
+//  { ID: 4, TAG: left_bracket }
+//  { ID: 7, TAG: T }
+//  { ID: 5, TAG: multiply }
+//  { ID: 8, TAG: F }
+//  { ID: 6, TAG: plus }
+//  { ID: 9, TAG: E }
   SymbolTable::Dump();
 
   SymbolID

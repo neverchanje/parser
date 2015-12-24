@@ -41,23 +41,18 @@ Symbol::Make(const std::string &tag, Type type) {
   return SymbolTable::AddSymbol(std::unique_ptr<Symbol>(new Symbol(tag, type)));
 }
 
-Symbol::Symbol() :
-    type_(Type::UNKNOWN),
-    id_(UNDEFINED_ID) {
-}
-
 void Symbol::Print() const {
   fprintf(stderr, "{ ID: %d, TAG: %s }", id_, tag_.c_str());
 }
 
-const Symbol &Symbol::EOR() {
-  if (hasEOR) {
-    return *globSymbolTable["$"];
-  } else {
-    hasEOR = true;
-    return Make("$", Type::TERMINAL);
-  }
+const Symbol &Symbol::Epsilon() {
+  return *globSymbolTable["ε"];
 }
+
+const Symbol &Symbol::EOR() {
+  return *globSymbolTable["$"];
+}
+
 
 void Symbol::SetID(SymbolID id) {
   assert(id_ == UNDEFINED_ID);
@@ -99,7 +94,14 @@ size_t SymbolTable::GetNNonTerminals() {
   return nNonTerminals;
 }
 
+static void makeReserved() {
+  Symbol::Make("ε", Symbol::TERMINAL);
+  Symbol::Make("$", Symbol::TERMINAL);
+}
+
 void SymbolTable::Pack() {
+  makeReserved();
+
   globTerminals = std::vector<std::unique_ptr<Symbol> >(nTerminals);
   globNonTerminals = std::vector<std::unique_ptr<Symbol> >(nNonTerminals);
   int ntid = 0, tid = 0;
