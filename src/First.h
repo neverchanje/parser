@@ -14,9 +14,13 @@ typedef int SymbolID;
 
 typedef std::unordered_set<SymbolID> SymbolSet;
 
-SymbolSet First(SymbolID X);
+// FIRST(X) can not handle left-recursive grammar.
+// Cost O(1) time.
+const SymbolSet &First(SymbolID X);
 
-SymbolSet First(std::vector<SymbolID> &&symbols);
+void InitFirst();
+
+void DumpFirst(const SymbolSet &symset);
 
 } // namespace parser
 

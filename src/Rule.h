@@ -17,6 +17,8 @@ namespace parser {
  */
 typedef int RuleID;
 
+typedef std::vector<SymbolID> SymbolList;
+
 /**
  * Rule:
  * lhs -> rhs1 rhs2 ...
@@ -25,7 +27,7 @@ class Rule {
 
  public:
 
-  static const Rule &Make(SymbolID lhs, std::vector<SymbolID> &&rhs);
+  static const Rule &Make(SymbolID lhs, SymbolList &&rhs);
 
  public:
 
@@ -44,7 +46,7 @@ class Rule {
 
  private:
 
-  Rule(SymbolID lhs, std::vector<SymbolID> &&rhs);
+  Rule(SymbolID lhs, SymbolList &&rhs);
 
   SymbolID lhs_;
 

@@ -5,12 +5,13 @@ add_subdirectory(lib/gtest-1.7.0)
 
 set(PARSER_SRC
         ${PARSER_SOURCE_DIR}/LR0.cc
+        ${PARSER_SOURCE_DIR}/LR1.cc
         ${PARSER_SOURCE_DIR}/DFA.cc
         ${PARSER_SOURCE_DIR}/Symbol.cc
         ${PARSER_SOURCE_DIR}/Closure.cc
         ${PARSER_SOURCE_DIR}/Rule.cc
         ${PARSER_SOURCE_DIR}/Item.cc
-        ${PARSER_SOURCE_DIR}/GoTo.cc
+        ${PARSER_SOURCE_DIR}/First.cc
         )
 
 add_executable(Symbol_unittest
@@ -37,3 +38,9 @@ add_executable(LR0_unittest
         ${PARSER_SRC}
         )
 target_link_libraries(LR0_unittest gtest gtest_main)
+
+add_executable(First_unittest
+        First_unittest.cc
+        ${PARSER_SRC}
+        )
+target_link_libraries(First_unittest gtest gtest_main)

@@ -34,14 +34,17 @@ class Symbol {
 
   static const Symbol &Make(const std::string &tag, Type type);
 
+  //// EOR and Epsilon is
+
   // end-of-rule symbol
+  // of type TERMINAL
   static const Symbol &EOR();
 
+  // of type TERMINAL
   static const Symbol &Epsilon();
 
  public:
 
-  Symbol();
   Symbol(const Symbol &) = default; // copyable.
 
   // Print the symbol in the form of "{ ID: id, TAG: tag }"
@@ -63,6 +66,8 @@ class Symbol {
   Type type_;
 
   // Each Symbol is marked by a SymbolID.
+  // ID of terminals ranges between [0, nTerminals-1],
+  // ID of non-terminals ranges between [nTerminals, nTerminals+nNonTerminals-1]
   SymbolID id_;
 
 };

@@ -18,7 +18,6 @@ static std::vector<std::unique_ptr<Symbol> > globNonTerminals;
 
 static size_t nTerminals = 0;
 static size_t nNonTerminals = 0;
-static bool hasEOR = false;
 
 bool Symbol::IsTerminal(SymbolID id) {
   return id >= 0 && id < nTerminals;
@@ -46,13 +45,12 @@ void Symbol::Print() const {
 }
 
 const Symbol &Symbol::Epsilon() {
-  return *globSymbolTable["ε"];
+  return SymbolTable::GetSymbol("ε");
 }
 
 const Symbol &Symbol::EOR() {
-  return *globSymbolTable["$"];
+  return SymbolTable::GetSymbol("$");
 }
-
 
 void Symbol::SetID(SymbolID id) {
   assert(id_ == UNDEFINED_ID);
@@ -141,7 +139,6 @@ void SymbolTable::Clear() {
   globSymbolTable.clear();
   globTerminals.clear();
   globNonTerminals.clear();
-  hasEOR = false;
   nNonTerminals = 0;
   nTerminals = 0;
 }

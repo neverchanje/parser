@@ -76,6 +76,7 @@ void RuleTable::Clear() {
   globDerives.clear();
   globRItems.clear();
   SymbolTable::Clear();
+  maxRuleID = 0;
 }
 
 const std::vector<RuleID> &

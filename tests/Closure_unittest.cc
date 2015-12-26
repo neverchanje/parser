@@ -51,7 +51,7 @@ class ClosureBasic1: public ::testing::Test {
 
 TEST_F(ClosureBasic1, ClosureBasic1_Test1) {
   // E -> •E + T
-  ItemSet clsr = Closure({MakeItem(r1, 0)});
+  ItemSet actual = Closure({MakeItem(r1, 0)});
 
 //  T -> •T multiply F $
 //  F -> •id $
@@ -59,19 +59,38 @@ TEST_F(ClosureBasic1, ClosureBasic1_Test1) {
 //  F -> •left_bracket E right_bracket $
 //  T -> •F $
 //  E -> •E plus T $
-  DumpClosure(clsr);
+  DumpClosure(actual);
+  ItemSet expect(
+      {
+          MakeItem(r3, 0),
+          MakeItem(r6, 0),
+          MakeItem(r2, 0),
+          MakeItem(r5, 0),
+          MakeItem(r4, 0),
+          MakeItem(r1, 0)
+      });
+  EXPECT_EQ(expect, actual);
 }
 
 TEST_F(ClosureBasic1, ClosureBasic1_Test2) {
   // E -> E + •T
-  ItemSet clsr = Closure({MakeItem(r1, 2)});
+  ItemSet actual = Closure({MakeItem(r1, 2)});
 
 //  F -> •id $
 //  T -> •T multiply F $
 //  F -> •left_bracket E right_bracket $
 //  T -> •F $
 //  E -> E plus •T $
-  DumpClosure(clsr);
+  DumpClosure(actual);
+  ItemSet expect(
+      {
+          MakeItem(r6, 0),
+          MakeItem(r3, 0),
+          MakeItem(r5, 0),
+          MakeItem(r4, 0),
+          MakeItem(r1, 2)
+      });
+  EXPECT_EQ(expect, actual);
 }
 
 class ClosureBasic2: public ::testing::Test {
