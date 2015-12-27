@@ -12,6 +12,8 @@ set(PARSER_SRC
         ${PARSER_SOURCE_DIR}/Rule.cc
         ${PARSER_SOURCE_DIR}/Item.cc
         ${PARSER_SOURCE_DIR}/First.cc
+        ${PARSER_SOURCE_DIR}/LAItem.h
+        ${PARSER_SOURCE_DIR}/LAClosure.cc
         )
 
 add_executable(Symbol_unittest
@@ -48,3 +50,9 @@ add_executable(First_unittest
         ${PARSER_SRC}
         )
 target_link_libraries(First_unittest gtest gtest_main)
+
+add_executable(LAClosure_unittest
+        LAClosure_unittest.cc
+        ${PARSER_SRC}
+        )
+target_link_libraries(LAClosure_unittest gtest gtest_main)

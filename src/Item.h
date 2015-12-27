@@ -32,12 +32,12 @@ struct Item {
     return SymbolTable::GetSymbol(RuleTable::GetRule(rule_id).GetRHS(offset));
   };
 
-  std::pair<RuleID, size_t> ToPair() const {
-    return std::make_pair(rule_id, offset);
-  };
-
   const Rule &GetRule() const {
     return RuleTable::GetRule(rule_id);
+  }
+
+  bool IsTheLast() const {
+    return RuleTable::GetRule(rule_id).GetRHSSize() <= offset + 1;
   }
 
   friend std::size_t hash_value(Item const &v) {
@@ -51,7 +51,7 @@ struct Item {
     return x.rule_id == y.rule_id && x.offset == y.offset;
   }
 
-  void Print() const;
+  virtual void Print() const;
 };
 
 struct ItemSetSort {
@@ -61,7 +61,7 @@ struct ItemSetSort {
     SymbolID x1 = i1.GetPointed();
     SymbolID x2 = i2.GetPointed();
     if (x1 == x2)
-      return i1.ToPair() < i2.ToPair();
+      return std::make_pair(i1.rule_id, i1.offset) < std::make_pair(i2.rule_id, i2.offset);
     return x1 < x2;
   }
 };

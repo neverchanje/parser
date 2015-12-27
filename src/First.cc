@@ -58,7 +58,6 @@ First(SymbolID X) {
   if (!globFirst[X].empty()) {
     return globFirst[X];
   }
-
   if (Symbol::IsTerminal(X)) {
     // if X is a terminal, then FIRST(X) = {X}
     globFirst[X].insert(X);

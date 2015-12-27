@@ -56,9 +56,6 @@ Automaton Automaton::Make(RuleID init) {
 
     for (auto i = clsr.begin(); i != clsr.end(); i++) {
       const Rule &rule = i->GetRule();
-      if (rule.GetRHSSize() <= i->offset) { // hit the end
-        continue;
-      }
 
       // There's an X exists so that item A -> a •X b is in ItemSet I
       X = i->GetPointed();
@@ -72,7 +69,10 @@ Automaton Automaton::Make(RuleID init) {
         Y = ni->GetPointed();
       }
 
-      tmp.insert(Item(i->rule_id, i->offset + 1));
+      if (!i->IsTheLast()) {
+        tmp.insert(Item(i->rule_id, i->offset + 1));
+      }
+
       if (X != Y) {
         ret = insertInTable(table, std::move(tmp), -1);
         if (ret.second) {

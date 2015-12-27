@@ -9,6 +9,7 @@ set(PARSER_SRC
         ${PARSER_SOURCE_DIR}/Item.cc
         ${PARSER_SOURCE_DIR}/First.cc
         ${PARSER_SOURCE_DIR}/LAItem.h
+        ${PARSER_SOURCE_DIR}/LAClosure.cc
         )
 
 add_executable(parser ${PARSER_SRC} main.cc)
