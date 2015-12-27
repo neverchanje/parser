@@ -6,31 +6,65 @@
 #define PARSER_ITEM_H
 
 #include <set>
+#include <boost/functional/hash.hpp>
 #include "Rule.h"
 
 namespace parser {
 
 typedef int RuleID;
 
-typedef std::pair<RuleID, size_t> Item;
+struct Item {
+  RuleID rule_id;
+  size_t offset;
 
-inline Item MakeItem(RuleID rule, size_t offset) {
-  return std::make_pair<RuleID, size_t>(RuleID(rule), size_t(offset));
-}
+  Item() = default;
+
+  Item(RuleID ruleID, size_t off) :
+      rule_id(ruleID),
+      offset(off) {
+  }
+
+  SymbolID GetPointed() const {
+    return RuleTable::GetRule(rule_id).GetRHS(offset);
+  }
+
+  const Symbol &GetPointedSym() const {
+    return SymbolTable::GetSymbol(RuleTable::GetRule(rule_id).GetRHS(offset));
+  };
+
+  std::pair<RuleID, size_t> ToPair() const {
+    return std::make_pair(rule_id, offset);
+  };
+
+  const Rule &GetRule() const {
+    return RuleTable::GetRule(rule_id);
+  }
+
+  friend std::size_t hash_value(Item const &v) {
+    std::size_t seed = 0;
+    boost::hash_combine(seed, v.rule_id);
+    boost::hash_combine(seed, v.offset);
+    return seed;
+  }
+
+  friend bool operator==(const Item &x, const Item &y) {
+    return x.rule_id == y.rule_id && x.offset == y.offset;
+  }
+
+  void Print() const;
+};
 
 struct ItemSetSort {
 // Each item A -> a •X b in ItemSet I are sorted by X in ascending order,
 // so that items can be grouped by different X.
   inline bool operator()(const Item &i1, const Item &i2) const {
-    SymbolID x1 = RuleTable::GetRule(i1.first).GetRHS(i1.second);
-    SymbolID x2 = RuleTable::GetRule(i2.first).GetRHS(i2.second);
+    SymbolID x1 = i1.GetPointed();
+    SymbolID x2 = i2.GetPointed();
     if (x1 == x2)
-      return i1 < i2;
+      return i1.ToPair() < i2.ToPair();
     return x1 < x2;
   }
 };
-
-void PrintItem(const Item &item);
 
 typedef std::set<Item, ItemSetSort> ItemSet;
 

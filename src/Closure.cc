@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <unordered_set>
 #include "Closure.h"
-#include "Rule.h"
 
 namespace parser {
 
@@ -18,13 +17,13 @@ ItemSet Closure(std::vector<Item> &&I) {
     I.pop_back();
     clsr.insert(it);
 
-    SymbolID sid = RuleTable::GetRule(it.first).GetRHS(it.second);
+    SymbolID sid = it.GetPointed();
 
     // Expand the non-terminal sid and check it has not been expanded.
     if (Symbol::IsNonTerminal(sid) && symset.find(sid) == symset.end()) {
       const auto &derives = RuleTable::GetDerives(sid);
       for (RuleID r : derives) {
-        I.push_back(MakeItem(r, 0));
+        I.push_back(Item(r, 0));
       }
       symset.insert(sid);
     }
@@ -33,11 +32,10 @@ ItemSet Closure(std::vector<Item> &&I) {
   return clsr;
 }
 
-
 void DumpClosure(const ItemSet &clsr) {
   fprintf(stderr, "\n------- Beginning of dumping the Closure. -------\n");
   for (auto &it : clsr) {
-    PrintItem(it);
+    it.Print();
     fprintf(stderr, "\n");
   }
   fprintf(stderr, "------- Ending of dumping the Closure. -------\n");

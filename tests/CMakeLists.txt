@@ -29,7 +29,11 @@ target_link_libraries(Rule_unittest gtest gtest_main)
 
 add_executable(Closure_unittest
         Closure_unittest.cc
-        ${PARSER_SRC}
+        ${PARSER_SOURCE_DIR}/DFA.cc
+        ${PARSER_SOURCE_DIR}/Symbol.cc
+        ${PARSER_SOURCE_DIR}/Closure.cc
+        ${PARSER_SOURCE_DIR}/Rule.cc
+        ${PARSER_SOURCE_DIR}/Item.cc
         )
 target_link_libraries(Closure_unittest gtest gtest_main)
 

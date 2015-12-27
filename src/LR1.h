@@ -23,8 +23,6 @@ class Automaton {
 
   Automaton() = default;
 
-  DFA dfa;
-
 };
 
 } // namespace LR1

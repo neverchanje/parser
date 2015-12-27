@@ -17,8 +17,6 @@ static inline std::vector<Item> itemSetToVector(const ItemSet &I) {
   return std::vector<Item>(I.begin(), I.end());
 }
 
-//typedef std::pair<ItemSet, DFA::State> ItemState;
-
 struct ItemSetHasher {
   size_t operator()(const ItemSet &val) const {
     return boost::hash_value(val);
@@ -47,7 +45,7 @@ Automaton Automaton::Make(RuleID init) {
   ItemSet clsr, tmp;
   std::pair<StateTable::iterator, bool> ret;
 
-  ret = insertInTable(table, {MakeItem(init, 0)}, DFA::State(DFA::START_STATE));
+  ret = insertInTable(table, {Item(init, 0)}, DFA::State(DFA::START_STATE));
   que.push(ret.first);
 
   while (!que.empty()) {
@@ -57,24 +55,24 @@ Automaton Automaton::Make(RuleID init) {
     tmp.clear();
 
     for (auto i = clsr.begin(); i != clsr.end(); i++) {
-      const Rule &rule = RuleTable::GetRule(i->first);
-      if (rule.GetRHSSize() <= i->second) { // hit the end
+      const Rule &rule = i->GetRule();
+      if (rule.GetRHSSize() <= i->offset) { // hit the end
         continue;
       }
 
       // There's an X exists so that item A -> a •X b is in ItemSet I
-      X = rule.GetRHS(i->second);
+      X = i->GetPointed();
 
-      // Y is the next symbol id
+      // Y is the symbol id pointed by the next item.
       // If X exists, then Y must exist.
       if (std::next(i) == clsr.end()) {
         Y = -1;
       } else {
         auto ni = std::next(i);
-        Y = RuleTable::GetRule(ni->first).GetRHS(ni->second);
+        Y = ni->GetPointed();
       }
 
-      tmp.insert(MakeItem(i->first, i->second + 1));
+      tmp.insert(Item(i->rule_id, i->offset + 1));
       if (X != Y) {
         ret = insertInTable(table, std::move(tmp), -1);
         if (ret.second) {

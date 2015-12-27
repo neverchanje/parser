@@ -19,7 +19,6 @@ TEST(LR0_Basics1, LR0_Basics1_Test) {
   Symbol::Make("=", Symbol::Type::TERMINAL);
   Symbol::Make("*", Symbol::Type::TERMINAL);
   Symbol::Make("id", Symbol::Type::TERMINAL);
-  Symbol::EOR();
 
   SymbolTable::Pack();
 

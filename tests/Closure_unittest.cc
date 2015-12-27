@@ -4,7 +4,6 @@
 
 #include <gtest/gtest.h>
 #include "Closure.h"
-#include "Symbol.h"
 #include "Rule.h"
 
 using namespace parser;
@@ -51,7 +50,7 @@ class ClosureBasic1: public ::testing::Test {
 
 TEST_F(ClosureBasic1, ClosureBasic1_Test1) {
   // E -> •E + T
-  ItemSet actual = Closure({MakeItem(r1, 0)});
+  ItemSet actual = Closure({Item(r1, 0)});
 
 //  T -> •T multiply F $
 //  F -> •id $
@@ -62,19 +61,19 @@ TEST_F(ClosureBasic1, ClosureBasic1_Test1) {
   DumpClosure(actual);
   ItemSet expect(
       {
-          MakeItem(r3, 0),
-          MakeItem(r6, 0),
-          MakeItem(r2, 0),
-          MakeItem(r5, 0),
-          MakeItem(r4, 0),
-          MakeItem(r1, 0)
+          Item(r3, 0),
+          Item(r6, 0),
+          Item(r2, 0),
+          Item(r5, 0),
+          Item(r4, 0),
+          Item(r1, 0)
       });
   EXPECT_EQ(expect, actual);
 }
 
 TEST_F(ClosureBasic1, ClosureBasic1_Test2) {
   // E -> E + •T
-  ItemSet actual = Closure({MakeItem(r1, 2)});
+  ItemSet actual = Closure({Item(r1, 2)});
 
 //  F -> •id $
 //  T -> •T multiply F $
@@ -84,11 +83,11 @@ TEST_F(ClosureBasic1, ClosureBasic1_Test2) {
   DumpClosure(actual);
   ItemSet expect(
       {
-          MakeItem(r6, 0),
-          MakeItem(r3, 0),
-          MakeItem(r5, 0),
-          MakeItem(r4, 0),
-          MakeItem(r1, 2)
+          Item(r6, 0),
+          Item(r3, 0),
+          Item(r5, 0),
+          Item(r4, 0),
+          Item(r1, 2)
       });
   EXPECT_EQ(expect, actual);
 }
@@ -139,7 +138,7 @@ class ClosureBasic2: public ::testing::Test {
 
 TEST_F(ClosureBasic2, ClosureBasic2_Test1) {
   // S_ -> •S
-  ItemSet clsr = Closure({MakeItem(r1, 0)});
+  ItemSet clsr = Closure({Item(r1, 0)});
 
 //  S -> •L = R $
 //  R -> •L $
