@@ -2,6 +2,7 @@
 // Created by neverchanje on 12/24/15.
 //
 
+#include <cassert>
 #include "First.h"
 #include "Rule.h"
 
@@ -9,16 +10,17 @@ namespace parser {
 
 static std::vector<SymbolSet> globFirst;
 
-// calculate FIRST(X) and add it to symset, X is a non-terminal.
-// return true if X -> epsilon is a production.
+// Calculate FIRST(X) and add it to symset, X is a non-terminal.
+// return true if there's an epsilon production.
 static bool insertNonTermFirst(SymbolSet &symset, SymbolID X) {
   // X is a non-terminal
-  // If X -> Y1 Y2 ... Yi ... Yn is a production
+  // If X -> Y1 Y2 ... Yi ... Yn $ is a production
 
   if (!globFirst[X].empty()) {
     symset.insert(globFirst[X].begin(), globFirst[X].end());
-    // If epsilon is in the set of FIRST(X), then X -> epsilon must be a production.
-    return globFirst[X].find(Symbol::Epsilon().GetID()) != globFirst[X].end();
+
+    // if FIRST(X) = $, then it's a epsilon production
+    return globFirst[X].find(Symbol::EOR().GetID()) != globFirst[X].end();
   }
 
   bool ret = false;
@@ -28,7 +30,15 @@ static bool insertNonTermFirst(SymbolSet &symset, SymbolID X) {
     const Rule &rule = RuleTable::GetRule(rid);
     SymbolID Y;
 
-    for (size_t i = 0; i < rule.GetRHSSize(); i++) {
+    // if X -> $ is a production, then add $ to FIRST(X)
+    if (rule.GetRHS(0) == Symbol::EOR().GetID()) {
+      assert(rule.GetRHSSize() > 0);
+      ret = true;
+      symset.insert(Symbol::EOR().GetID());
+      continue;
+    }
+
+    for (size_t i = 0; i < rule.GetRHSSize() - 1; i++) {
       Y = rule.GetRHS(i);
 
       // to prevent recursive calculation.
@@ -38,21 +48,19 @@ static bool insertNonTermFirst(SymbolSet &symset, SymbolID X) {
 
       if (Symbol::IsTerminal(Y)) {
         symset.insert(Y);
-        if (Y != Symbol::Epsilon().GetID()) {
-          ret = false;
-          break;
-        }
-      } else {
-        if (!insertNonTermFirst(symset, Y)) {
-          ret = false;
-          break;
-        }
+        ret = false;
+        break;
+      } else if (!insertNonTermFirst(symset, Y)) {
+        ret = false;
+        break;
       }
     }
   }
   return ret;
 }
 
+
+/// NOTE: FIRST($) = $
 const SymbolSet &
 First(SymbolID X) {
   if (!globFirst[X].empty()) {

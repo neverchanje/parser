@@ -30,8 +30,7 @@ TEST(First_Basics1, First_Basics1_Test) {
       R = SymbolTable::GetSymbol("R").GetID(),
       equal = SymbolTable::GetSymbol("=").GetID(),
       multiply = SymbolTable::GetSymbol("*").GetID(),
-      id = SymbolTable::GetSymbol("id").GetID(),
-      epsilon = SymbolTable::GetSymbol("ε").GetID();
+      id = SymbolTable::GetSymbol("id").GetID();
 
 //  S_ -> S $
 //  S -> L = R $
@@ -103,22 +102,22 @@ TEST(First_Basics3, First_Basics3_Test) {
       B = SymbolTable::GetSymbol("B").GetID(),
       C = SymbolTable::GetSymbol("C").GetID(),
       a = SymbolTable::GetSymbol("a").GetID(),
-      epsilon = Symbol::Epsilon().GetID();
+      eor = SymbolTable::GetSymbol("$").GetID();
 
 //  S -> A
 //  A -> B
 //  B -> a | C
-//  C -> epsilon
+//  C -> $
   RuleID
       r0 = Rule::Make(S, {A}).GetID(),
       r1 = Rule::Make(A, {B}).GetID(),
       r2 = Rule::Make(B, {a}).GetID(),
       r3 = Rule::Make(B, {C}).GetID(),
-      r4 = Rule::Make(C, {epsilon}).GetID();
+      r4 = Rule::MakeEps(C).GetID();
 
   RuleTable::Dump();
   InitFirst();
 
-  EXPECT_EQ(SymbolSet({epsilon}), First(C));
-  EXPECT_EQ(SymbolSet({a, epsilon}), First(B));
+  EXPECT_EQ(SymbolSet({eor}), First(C));
+  EXPECT_EQ(SymbolSet({a, eor}), First(B));
 }

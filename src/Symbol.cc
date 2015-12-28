@@ -44,10 +44,6 @@ void Symbol::Print() const {
   fprintf(stderr, "{ ID: %d, TAG: %s }", id_, tag_.c_str());
 }
 
-const Symbol &Symbol::Epsilon() {
-  return SymbolTable::GetSymbol("ε");
-}
-
 const Symbol &Symbol::EOR() {
   return SymbolTable::GetSymbol("$");
 }
@@ -93,7 +89,6 @@ size_t SymbolTable::GetNNonTerminals() {
 }
 
 static void makeReserved() {
-  Symbol::Make("ε", Symbol::TERMINAL);
   Symbol::Make("$", Symbol::TERMINAL);
 }
 

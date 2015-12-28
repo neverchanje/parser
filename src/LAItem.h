@@ -5,24 +5,36 @@
 #ifndef PARSER_LAITEM_H
 #define PARSER_LAITEM_H
 
-#include <unordered_set>
 #include "Item.h"
 
 namespace parser {
 
-typedef std::unordered_set<SymbolID> SymbolSet;
-
+// Item with lookaheads.
 struct LAItem: public Item {
-  SymbolSet lookahead;
+  SymbolID lookahead;
 
-  LAItem(RuleID id, size_t off, const SymbolSet &la) :
+  LAItem() = default;
+
+  LAItem(RuleID id, size_t off, SymbolID la) :
       Item(id, off),
       lookahead(la) {
   }
 };
 
-// The order of LAItem in an LAItemSet is nothing to do with lookahead.
-typedef std::set<LAItem, ItemSetSort> LAItemSet;
+struct LAItemSetSort {
+// Each item A -> a •X b in ItemSet I are sorted by X in ascending order,
+// so that items can be grouped by different X.
+  inline bool operator()(const LAItem &i1, const LAItem &i2) const {
+    SymbolID x1 = i1.GetPointed();
+    SymbolID x2 = i2.GetPointed();
+    if (x1 == x2)
+      return std::make_tuple(i1.rule_id, i1.offset, i1.lookahead)
+          < std::make_tuple(i2.rule_id, i2.offset, i1.lookahead);
+    return x1 < x2;
+  }
+};
+
+typedef std::set<LAItem, LAItemSetSort> LAItemSet;
 
 } // namespace parser
 

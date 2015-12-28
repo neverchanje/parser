@@ -138,7 +138,7 @@ class ClosureBasic2: public ::testing::Test {
 
 TEST_F(ClosureBasic2, ClosureBasic2_Test1) {
   // S_ -> •S
-  ItemSet clsr = Closure({Item(r1, 0)});
+  ItemSet actual = Closure({Item(r1, 0)});
 
 //  S -> •L = R $
 //  R -> •L $
@@ -146,5 +146,16 @@ TEST_F(ClosureBasic2, ClosureBasic2_Test1) {
 //  L -> •* R $
 //  L -> •id $
 //  S -> •R $
-  DumpClosure(clsr);
+  DumpClosure(actual);
+
+  ItemSet expect(
+      {
+          Item(r6, 0),
+          Item(r3, 0),
+          Item(r5, 0),
+          Item(r4, 0),
+          Item(r1, 0),
+          Item(r2, 0)
+      });
+  EXPECT_EQ(expect, actual);
 }

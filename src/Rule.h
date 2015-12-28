@@ -29,6 +29,9 @@ class Rule {
 
   static const Rule &Make(SymbolID lhs, SymbolList &&rhs);
 
+  // add lhs -> $ to RuleTable.
+  static const Rule &MakeEps(SymbolID lhs);
+
  public:
 
   void Dump() const;

@@ -36,6 +36,12 @@ struct Item {
     return RuleTable::GetRule(rule_id);
   }
 
+  // The return value of AtEnd denotes that if the item hit the end, which means
+  // its dot is on the left of the end symbol $.
+  bool AtEnd() const {
+    return RuleTable::GetRule(rule_id).GetRHSSize() <= offset;
+  }
+
   bool IsTheLast() const {
     return RuleTable::GetRule(rule_id).GetRHSSize() <= offset + 1;
   }

@@ -34,14 +34,9 @@ class Symbol {
 
   static const Symbol &Make(const std::string &tag, Type type);
 
-  //// EOR and Epsilon is
-
   // end-of-rule symbol
   // of type TERMINAL
   static const Symbol &EOR();
-
-  // of type TERMINAL
-  static const Symbol &Epsilon();
 
  public:
 

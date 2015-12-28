@@ -69,7 +69,7 @@ Automaton Automaton::Make(RuleID init) {
         Y = ni->GetPointed();
       }
 
-      if (!i->IsTheLast()) {
+      if (!i->AtEnd()) {
         tmp.insert(Item(i->rule_id, i->offset + 1));
       }
 

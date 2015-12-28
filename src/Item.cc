@@ -17,7 +17,7 @@ void Item::Print() const {
     fprintf(stderr, "%s ", RULE_RHS_SYMBOL_TAG(rule, i));
   }
   fprintf(stderr, "•%s", RULE_RHS_SYMBOL_TAG(rule, offset));
-  for (size_t i = offset + 1; i < rule.GetRHSSize() + 1; ++i) {
+  for (size_t i = offset + 1; i < rule.GetRHSSize(); ++i) {
     fprintf(stderr, " %s", RULE_RHS_SYMBOL_TAG(rule, i));
   }
 }

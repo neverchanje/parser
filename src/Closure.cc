@@ -17,6 +17,10 @@ ItemSet Closure(std::vector<Item> &&I) {
     I.pop_back();
     clsr.insert(it);
 
+    if (it.AtEnd()) {
+      continue;
+    }
+
     SymbolID sid = it.GetPointed();
 
     // Expand the non-terminal sid and check it has not been expanded.
