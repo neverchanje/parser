@@ -9,7 +9,7 @@
 
 namespace parser {
 
-LAItemSet LAClosure(std::vector<Item> &&I);
+LAItemSet LAClosure(std::vector<LAItem> &&I);
 
 } // namespace parser
 

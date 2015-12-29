@@ -46,8 +46,6 @@ TEST(First_Basics1, First_Basics1_Test) {
       r5 = Rule::Make(L, {id}).GetID(),
       r6 = Rule::Make(R, {L}).GetID();
 
-  InitFirst();
-
   EXPECT_EQ(SymbolSet({multiply, id}), First(S));
 
   EXPECT_EQ(SymbolSet({multiply, id}), First(L));
@@ -76,8 +74,6 @@ TEST(First_Basics2, First_Basics2_Test) {
   RuleID
       r0 = Rule::Make(F, {left_bracket, E, right_bracket}).GetID(),
       r1 = Rule::Make(F, {id}).GetID();
-
-  InitFirst();
 
   EXPECT_EQ(SymbolSet({left_bracket, id}), First(F));
 
@@ -116,8 +112,8 @@ TEST(First_Basics3, First_Basics3_Test) {
       r4 = Rule::MakeEps(C).GetID();
 
   RuleTable::Dump();
-  InitFirst();
 
   EXPECT_EQ(SymbolSet({eor}), First(C));
   EXPECT_EQ(SymbolSet({a, eor}), First(B));
+  EXPECT_EQ(SymbolSet({eor}), First(eor));
 }

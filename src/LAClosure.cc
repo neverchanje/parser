@@ -30,27 +30,25 @@ LAItemSet LAClosure(std::vector<LAItem> &&I) {
     auto it = I.back();
     I.pop_back();
 
+    clsr.insert(it);
+
     if (it.AtEnd()) {
       continue;
     }
 
-    la_set.clear();
     B = it.GetPointed();
 
-    if (it.IsTheLast()) {
-      la_set.insert(it.lookahead);
-    } else {
+    if (Symbol::IsNonTerminal(B)) {
+
       b = RuleTable::GetRule(it.rule_id).GetRHS(it.offset + 1);
       la_set = calculateLA(b, it.lookahead);
-    }
-
-    if (Symbol::IsNonTerminal(B)) {
       const auto &derives = RuleTable::GetDerives(B);
+
       for (RuleID r : derives) {
         for (SymbolID la : la_set) {
           ni = LAItem(r, 0, la);
           if (clsr.find(ni) == clsr.end()) {
-            I.push_back(LAItem(r, 0, la));
+            I.push_back(ni);
           }
         }
       }

@@ -4,6 +4,7 @@
 #include <gtest/gtest.h>
 #include "LAClosure.h"
 #include "Rule.h"
+#include "First.h"
 
 using namespace parser;
 
@@ -49,39 +50,40 @@ class LAClosureBasic1: public ::testing::Test {
 
 TEST_F(LAClosureBasic1, LAClosureBasic1_Test1) {
   // E -> •E + T, $
-  LAItemSet actual = LAClosure({LAItem(r1, 0, Symbol::EOR().GetID())});
+  LAItemSet actual = LAClosure({LAItem(r1, 0, eor)});
 
   LAItemSet expect(
       {
           LAItem(r1, 0, eor), // E -> •E plus T $ , $
           LAItem(r1, 0, plus), // E -> •E plus T $ , plus
-          LAItem(r2, 0, plus), //  E -> •T $ , plus
-          LAItem(r3, 0,), //  T -> •T multiply F $ , +
-          LAItem(r6, 0), //  F -> •id $ ,
-          LAItem(r5, 0), //  F -> •left_bracket E right_bracket $
-          LAItem(r4, 0,), // T -> •F $
+          LAItem(r2, 0, plus), // E -> •T $ , plus
+          LAItem(r3, 0, plus), // T -> •T multiply F $ , plus
+          LAItem(r4, 0, plus), // T -> •F $ , plus
+          LAItem(r3, 0, multiply), // T -> •T multiply F $ , multiply
+          LAItem(r4, 0, multiply), // T -> •F $ , multiply
+          LAItem(r6, 0, plus), //  F -> •id $ , plus
+          LAItem(r6, 0, plus), //  F -> •id $ , multiply
+          LAItem(r5, 0, plus), //  F -> •left_bracket E right_bracket $ , plus
+          LAItem(r5, 0, multiply) //  F -> •left_bracket E right_bracket $ , multiply
       });
-//  DumpClosure(actual);
+
   EXPECT_EQ(expect, actual);
 }
 
 TEST_F(LAClosureBasic1, LAClosureBasic1_Test2) {
-  // E -> E + •T
-  LAItemSet actual = LAClosure({Item(r1, 2)});
+  // E -> E + •T , $
+  LAItemSet actual = LAClosure({LAItem(r1, 2, eor)});
 
-//  F -> •id $
-//  T -> •T multiply F $
-//  F -> •left_bracket E right_bracket $
-//  T -> •F $
-//  E -> E plus •T $
 //  DumpClosure(actual);
   LAItemSet expect(
       {
-          LAItem(r6, 0),
-          LAItem(r3, 0),
-          LAItem(r5, 0),
-          LAItem(r4, 0),
-          LAItem(r1, 2)
+          LAItem(r1, 2, eor), //  E -> E plus •T $ , $
+          LAItem(r3, 0, eor), //  T -> •T multiply F $
+          LAItem(r4, 0, eor), //  T -> •F $
+          LAItem(r3, 0, multiply), //  T -> •T multiply F $
+          LAItem(r4, 0, multiply), //  T -> •F $
+          LAItem(r5, 0, eor), //  F -> •left_bracket E right_bracket $
+          LAItem(r6, 0, eor) //  F -> •id $
       });
   EXPECT_EQ(expect, actual);
 }
@@ -103,14 +105,14 @@ class LAClosureBasic2: public ::testing::Test {
 
     SymbolTable::Pack();
 
-    SymbolID
-        S_ = SymbolTable::GetSymbol("S_").GetID(),
-        S = SymbolTable::GetSymbol("S").GetID(),
-        L = SymbolTable::GetSymbol("L").GetID(),
-        R = SymbolTable::GetSymbol("R").GetID(),
-        equal = SymbolTable::GetSymbol("=").GetID(),
-        multiply = SymbolTable::GetSymbol("*").GetID(),
-        id = SymbolTable::GetSymbol("id").GetID();
+    S_ = SymbolTable::GetSymbol("S_").GetID();
+    S = SymbolTable::GetSymbol("S").GetID();
+    L = SymbolTable::GetSymbol("L").GetID();
+    R = SymbolTable::GetSymbol("R").GetID();
+    equal = SymbolTable::GetSymbol("=").GetID();
+    multiply = SymbolTable::GetSymbol("*").GetID();
+    id = SymbolTable::GetSymbol("id").GetID();
+    eor = SymbolTable::GetSymbol("$").GetID();
 
 //  S_ -> S $
 //  S -> L = R $
@@ -127,18 +129,22 @@ class LAClosureBasic2: public ::testing::Test {
   }
 
   RuleID r1, r2, r3, r4, r5, r6;
-
+  SymbolID S_, S, L, R, equal, multiply, id, eor;
 };
 
 TEST_F(LAClosureBasic2, LAClosureBasic2_Test1) {
-  // S_ -> •S
-  LAItemSet clsr = LAClosure({Item(r1, 0)});
+  // S_ -> •S, $
+  LAItemSet actual = LAClosure({LAItem(r1, 0, eor)});
 
-//  S -> •L = R $
-//  R -> •L $
-//  S_ -> •S $
-//  L -> •* R $
-//  L -> •id $
-//  S -> •R $
-//  DumpClosure(clsr);
+  LAItemSet expect(
+      {
+          LAItem(r1, 0, eor), //  S_ -> •S $ , $
+          LAItem(r2, 0, eor), //  S -> •L = R $ , $
+          LAItem(r3, 0, eor), //  S -> •R $ , $
+          LAItem(r4, 0, equal), //  L -> •* R $ , =
+          LAItem(r5, 0, equal), //  L -> •id $ , =
+          LAItem(r6, 0, eor) //  R -> •L $
+      });
+
+  EXPECT_EQ(expect, actual);
 }

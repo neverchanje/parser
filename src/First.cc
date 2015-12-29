@@ -63,6 +63,11 @@ static bool insertNonTermFirst(SymbolSet &symset, SymbolID X) {
 /// NOTE: FIRST($) = $
 const SymbolSet &
 First(SymbolID X) {
+
+  if (!globFirst.size()) { // initialize the size of globFirst
+    globFirst.resize(SymbolTable::GetNSymbols());
+  }
+
   if (!globFirst[X].empty()) {
     return globFirst[X];
   }
@@ -73,10 +78,6 @@ First(SymbolID X) {
     insertNonTermFirst(globFirst[X], X);
   }
   return globFirst[X];
-}
-
-void InitFirst() {
-  globFirst.resize(SymbolTable::GetNSymbols());
 }
 
 } // namespace parser
