@@ -22,7 +22,6 @@ class LAClosureBasic1: public ::testing::Test {
     Symbol::Make("left_bracket", Symbol::Type::TERMINAL);
     Symbol::Make("right_bracket", Symbol::Type::TERMINAL);
     Symbol::Make("id", Symbol::Type::TERMINAL);
-    Symbol::EOR();
 
     SymbolTable::Pack();
 
@@ -101,7 +100,6 @@ class LAClosureBasic2: public ::testing::Test {
     Symbol::Make("=", Symbol::Type::TERMINAL);
     Symbol::Make("*", Symbol::Type::TERMINAL);
     Symbol::Make("id", Symbol::Type::TERMINAL);
-    Symbol::EOR();
 
     SymbolTable::Pack();
 

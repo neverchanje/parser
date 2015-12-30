@@ -19,6 +19,12 @@ struct LAItem: public Item {
       Item(id, off),
       lookahead(la) {
   }
+
+  void Print() const override;
+
+  Item Next() const override {
+    return LAItem(rule_id, offset + 1, lookahead);
+  }
 };
 
 struct LAItemSetSort {

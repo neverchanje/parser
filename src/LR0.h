@@ -6,12 +6,21 @@
 #define PARSER_LR0_H
 
 #include "DFA.h"
+#include "Item.h"
 
 namespace parser {
 
 typedef int RuleID;
 
 namespace LR0 {
+
+struct ItemSetHasher {
+  size_t operator()(const ItemSet &val) const;
+};
+
+typedef std::unordered_map<ItemSet, DFA::State, ItemSetHasher> StateTable;
+
+// typedef std::pair<ItemSet, DFA::State> State;
 
 class Automaton {
 

@@ -30,7 +30,7 @@ struct Item {
 
   const Symbol &GetPointedSym() const {
     return SymbolTable::GetSymbol(RuleTable::GetRule(rule_id).GetRHS(offset));
-  };
+  }
 
   const Rule &GetRule() const {
     return RuleTable::GetRule(rule_id);
@@ -58,6 +58,10 @@ struct Item {
   }
 
   virtual void Print() const;
+
+  virtual Item Next() const {
+    return Item(rule_id, offset + 1);
+  }
 };
 
 struct ItemSetSort {

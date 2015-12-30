@@ -13,26 +13,11 @@ namespace parser {
 
 namespace LR0 {
 
-static inline std::vector<Item> itemSetToVector(const ItemSet &I) {
-  return std::vector<Item>(I.begin(), I.end());
-}
-
-struct ItemSetHasher {
-  size_t operator()(const ItemSet &val) const {
-    return boost::hash_value(val);
-  }
-};
-
-typedef std::unordered_map<ItemSet, DFA::State, ItemSetHasher> StateTable;
-
-#define QBACK_ISET(que) (que.back()->first)
-#define QBACK_STATE(que) (que.back()->second)
 #define QFRONT_ISET(que) (que.front()->first)
 #define QFRONT_STATE(que) (que.front()->second)
 
-static inline std::pair<StateTable::iterator, bool>
-insertInTable(StateTable &table, ItemSet &&iset, DFA::State &&state) {
-  return table.insert(std::make_pair(iset, state));
+static inline std::pair<ItemSet, DFA::State> startState(RuleID init) {
+  return std::make_pair(ItemSet({Item(init, 0)}), DFA::State(DFA::START_STATE));
 }
 
 Automaton Automaton::Make(RuleID init) {
@@ -45,12 +30,12 @@ Automaton Automaton::Make(RuleID init) {
   ItemSet clsr, tmp;
   std::pair<StateTable::iterator, bool> ret;
 
-  ret = insertInTable(table, {Item(init, 0)}, DFA::State(DFA::START_STATE));
+  ret = table.insert(startState(init));
   que.push(ret.first);
 
   while (!que.empty()) {
     const auto &I = QFRONT_ISET(que); // I contains only kernel items.
-    clsr = Closure(itemSetToVector(I));
+    clsr = Closure(std::vector<Item>(I.begin(), I.end()));
     DumpClosure(clsr);
     tmp.clear();
 
@@ -74,7 +59,7 @@ Automaton Automaton::Make(RuleID init) {
       }
 
       if (X != Y) {
-        ret = insertInTable(table, std::move(tmp), -1);
+        ret = table.insert(std::make_pair(std::move(tmp), -1));
         if (ret.second) {
           ret.first->second = atm.dfa_.MakeState();
           que.push(ret.first);
@@ -102,6 +87,10 @@ void Automaton::Dump() const {
     }
   }
   fprintf(stderr, "------- Ending of dumping the LR0. -------\n");
+}
+
+size_t ItemSetHasher::operator()(const ItemSet &val) const {
+  return boost::hash_value(val);
 }
 
 } // namespace LR0
