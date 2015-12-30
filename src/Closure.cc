@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <unordered_set>
+#include <boost/make_unique.hpp>
 #include "Closure.h"
 
 namespace parser {
@@ -13,9 +14,9 @@ ItemSet Closure(std::vector<Item> &&I) {
   std::unordered_set<SymbolID> symset; // use bitset ?
 
   while (!I.empty()) {
-    auto it = I.back();
+    auto &it = I.back();
     I.pop_back();
-    clsr.insert(it);
+    clsr.insert(boost::make_unique<Item>(Item(it)));
 
     if (it.AtEnd()) {
       continue;
@@ -39,7 +40,7 @@ ItemSet Closure(std::vector<Item> &&I) {
 void DumpClosure(const ItemSet &clsr) {
   fprintf(stderr, "\n------- Beginning of dumping the Closure. -------\n");
   for (auto &it : clsr) {
-    it.Print();
+    it->Print();
     fprintf(stderr, "\n");
   }
   fprintf(stderr, "------- Ending of dumping the Closure. -------\n");

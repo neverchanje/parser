@@ -3,8 +3,8 @@
 //
 
 #include <gtest/gtest.h>
+#include "ItemSetTestHelper.h"
 #include "Closure.h"
-#include "Rule.h"
 
 using namespace parser;
 
@@ -22,7 +22,6 @@ class ClosureBasic1: public ::testing::Test {
     Symbol::Make("left_bracket", Symbol::Type::TERMINAL);
     Symbol::Make("right_bracket", Symbol::Type::TERMINAL);
     Symbol::Make("id", Symbol::Type::TERMINAL);
-    Symbol::EOR();
 
     SymbolTable::Pack();
 
@@ -52,44 +51,33 @@ TEST_F(ClosureBasic1, ClosureBasic1_Test1) {
   // E -> •E + T
   ItemSet actual = Closure({Item(r1, 0)});
 
-//  T -> •T multiply F $
-//  F -> •id $
-//  E -> •T $
-//  F -> •left_bracket E right_bracket $
-//  T -> •F $
-//  E -> •E plus T $
-  DumpClosure(actual);
-  ItemSet expect(
-      {
-          Item(r3, 0),
-          Item(r6, 0),
-          Item(r2, 0),
-          Item(r5, 0),
-          Item(r4, 0),
-          Item(r1, 0)
-      });
-  EXPECT_EQ(expect, actual);
+//  DumpClosure(actual);
+
+  ItemSet expect;
+  expect.insert(MakeItem(r1, 0)); //  E -> •E plus T $
+  expect.insert(MakeItem(r2, 0)); //  E -> •T $
+  expect.insert(MakeItem(r3, 0)); //  T -> •T multiply F $
+  expect.insert(MakeItem(r4, 0)); //  T -> •F $
+  expect.insert(MakeItem(r5, 0)); //  F -> •left_bracket E right_bracket $
+  expect.insert(MakeItem(r6, 0)); //  F -> •id $
+
+  EXPECT_PRED_FORMAT2 (AssertItemSetCmp, expect, actual);
 }
 
 TEST_F(ClosureBasic1, ClosureBasic1_Test2) {
   // E -> E + •T
   ItemSet actual = Closure({Item(r1, 2)});
 
-//  F -> •id $
-//  T -> •T multiply F $
-//  F -> •left_bracket E right_bracket $
-//  T -> •F $
-//  E -> E plus •T $
-  DumpClosure(actual);
-  ItemSet expect(
-      {
-          Item(r6, 0),
-          Item(r3, 0),
-          Item(r5, 0),
-          Item(r4, 0),
-          Item(r1, 2)
-      });
-  EXPECT_EQ(expect, actual);
+//  DumpClosure(actual);
+
+  ItemSet expect;
+  expect.insert(MakeItem(r1, 2)); //  E -> E plus •T $
+  expect.insert(MakeItem(r3, 0)); //  T -> •T multiply F $
+  expect.insert(MakeItem(r4, 0)); //  T -> •F $
+  expect.insert(MakeItem(r6, 0)); //  F -> •id $
+  expect.insert(MakeItem(r5, 0)); //  F -> •left_bracket E right_bracket $
+
+  EXPECT_PRED_FORMAT2 (AssertItemSetCmp, expect, actual);
 }
 
 class ClosureBasic2: public ::testing::Test {
@@ -105,7 +93,6 @@ class ClosureBasic2: public ::testing::Test {
     Symbol::Make("=", Symbol::Type::TERMINAL);
     Symbol::Make("*", Symbol::Type::TERMINAL);
     Symbol::Make("id", Symbol::Type::TERMINAL);
-    Symbol::EOR();
 
     SymbolTable::Pack();
 
@@ -140,22 +127,15 @@ TEST_F(ClosureBasic2, ClosureBasic2_Test1) {
   // S_ -> •S
   ItemSet actual = Closure({Item(r1, 0)});
 
-//  S -> •L = R $
-//  R -> •L $
-//  S_ -> •S $
-//  L -> •* R $
-//  L -> •id $
-//  S -> •R $
-  DumpClosure(actual);
+//  DumpClosure(actual);
 
-  ItemSet expect(
-      {
-          Item(r6, 0),
-          Item(r3, 0),
-          Item(r5, 0),
-          Item(r4, 0),
-          Item(r1, 0),
-          Item(r2, 0)
-      });
-  EXPECT_EQ(expect, actual);
+  ItemSet expect;
+  expect.insert(MakeItem(r6, 0)); //  R -> •L $
+  expect.insert(MakeItem(r3, 0)); //  S -> •R $
+  expect.insert(MakeItem(r5, 0)); //  L -> •id $
+  expect.insert(MakeItem(r4, 0)); //  L -> •* R $
+  expect.insert(MakeItem(r1, 0)); //  S_ -> •S $
+  expect.insert(MakeItem(r2, 0)); //  S -> •L = R $
+
+  EXPECT_PRED_FORMAT2 (AssertItemSetCmp, expect, actual);
 }

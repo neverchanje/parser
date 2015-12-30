@@ -34,8 +34,8 @@ struct LAItemSetSort {
     SymbolID x1 = i1.GetPointed();
     SymbolID x2 = i2.GetPointed();
     if (x1 == x2)
-      return std::make_tuple(i1.rule_id, i1.offset, i1.lookahead)
-          < std::make_tuple(i2.rule_id, i2.offset, i1.lookahead);
+      return std::tuple(i1.rule_id, i1.offset, i1.lookahead)
+          < std::tuple(i2.rule_id, i2.offset, i1.lookahead);
     return x1 < x2;
   }
 };

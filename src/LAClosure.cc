@@ -2,7 +2,6 @@
 // Created by neverchanje on 12/27/15.
 //
 
-#include <unordered_set>
 #include "LAClosure.h"
 #include "First.h"
 

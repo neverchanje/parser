@@ -29,7 +29,7 @@ struct Item {
   }
 
   const Symbol &GetPointedSym() const {
-    return SymbolTable::GetSymbol(RuleTable::GetRule(rule_id).GetRHS(offset));
+    return SymbolTable::GetSymbol(GetPointed());
   }
 
   const Rule &GetRule() const {
@@ -40,10 +40,6 @@ struct Item {
   // its dot is on the left of the end symbol $.
   bool AtEnd() const {
     return RuleTable::GetRule(rule_id).GetRHSSize() <= offset;
-  }
-
-  bool IsTheLast() const {
-    return RuleTable::GetRule(rule_id).GetRHSSize() <= offset + 1;
   }
 
   friend std::size_t hash_value(Item const &v) {
@@ -57,6 +53,8 @@ struct Item {
     return x.rule_id == y.rule_id && x.offset == y.offset;
   }
 
+  virtual std::string ToString() const;
+
   virtual void Print() const;
 
   virtual Item Next() const {
@@ -64,19 +62,25 @@ struct Item {
   }
 };
 
-struct ItemSetSort {
+namespace detail {
+
+struct ItemPtrLess {
 // Each item A -> a •X b in ItemSet I are sorted by X in ascending order,
 // so that items can be grouped by different X.
-  inline bool operator()(const Item &i1, const Item &i2) const {
-    SymbolID x1 = i1.GetPointed();
-    SymbolID x2 = i2.GetPointed();
+  inline bool operator()(const std::unique_ptr<Item> &p1,
+                         const std::unique_ptr<Item> &p2) const {
+    SymbolID x1 = p1->GetPointed();
+    SymbolID x2 = p2->GetPointed();
     if (x1 == x2)
-      return std::make_pair(i1.rule_id, i1.offset) < std::make_pair(i2.rule_id, i2.offset);
+      return std::pair<RuleID, size_t>(p1->rule_id, p1->offset) <
+          std::pair<RuleID, size_t>(p2->rule_id, p2->offset);
     return x1 < x2;
   }
 };
 
-typedef std::set<Item, ItemSetSort> ItemSet;
+} // namespace detail
+
+typedef std::set<std::unique_ptr<Item>, detail::ItemPtrLess> ItemSet;
 
 } // namespace parser
 
