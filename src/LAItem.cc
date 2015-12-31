@@ -6,9 +6,10 @@
 
 namespace parser {
 
-void LAItem::Print() const {
-  Item::Print();
-  printf(" , %s", SymbolTable::GetSymbol(lookahead).GetTag().c_str());
+std::string LAItem::ToString() const {
+  return Item::ToString()
+      + " , "
+      + SymbolTable::GetSymbol(lookahead).GetTag();
 }
 
 } // namespace parser

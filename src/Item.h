@@ -6,7 +6,8 @@
 #define PARSER_ITEM_H
 
 #include <set>
-#include <boost/functional/hash.hpp>
+#include <boost/any.hpp>
+#include <boost/operators.hpp>
 #include "Rule.h"
 
 namespace parser {
@@ -36,51 +37,66 @@ struct Item {
     return RuleTable::GetRule(rule_id);
   }
 
-  // The return value of AtEnd denotes that if the item hit the end, which means
+  // The return value of AtEnd denotes whether the item hits the end, which means
   // its dot is on the left of the end symbol $.
   bool AtEnd() const {
     return RuleTable::GetRule(rule_id).GetRHSSize() <= offset;
   }
 
-  friend std::size_t hash_value(Item const &v) {
-    std::size_t seed = 0;
-    boost::hash_combine(seed, v.rule_id);
-    boost::hash_combine(seed, v.offset);
-    return seed;
+  bool operator==(const Item &rhs) const {
+    return rule_id == rhs.rule_id && offset == rhs.offset
+        && CompareOthers(rhs) && CompareOthers(*this);
   }
 
-  friend bool operator==(const Item &x, const Item &y) {
-    return x.rule_id == y.rule_id && x.offset == y.offset;
+  // return true if Others() < rhs.Others();
+  // return false here, since it's not required to be implemented in Item.
+  virtual bool CompareOthers(const Item &rhs) const {
+    return false;
+  }
+
+  virtual boost::any Others() const {
+    return 0;
   }
 
   virtual std::string ToString() const;
 
-  virtual void Print() const;
+  void Print() const {
+    fprintf(stderr, "%s\n", ToString().c_str());
+  }
 
+  // TODO: return value should be unique_ptr
   virtual Item Next() const {
     return Item(rule_id, offset + 1);
   }
 };
+
+typedef std::unique_ptr<Item> UPItem;
 
 namespace detail {
 
 struct ItemPtrLess {
 // Each item A -> a •X b in ItemSet I are sorted by X in ascending order,
 // so that items can be grouped by different X.
-  inline bool operator()(const std::unique_ptr<Item> &p1,
-                         const std::unique_ptr<Item> &p2) const {
+  inline bool operator()(const UPItem &p1, const UPItem &p2) const {
     SymbolID x1 = p1->GetPointed();
     SymbolID x2 = p2->GetPointed();
-    if (x1 == x2)
-      return std::pair<RuleID, size_t>(p1->rule_id, p1->offset) <
-          std::pair<RuleID, size_t>(p2->rule_id, p2->offset);
+    if (x1 == x2) {
+      std::pair<RuleID, size_t> i1(p1->rule_id, p1->offset);
+      std::pair<RuleID, size_t> i2(p2->rule_id, p2->offset);
+      if (i2 == i1) {
+        return p1->CompareOthers(*p2);
+      }
+      return i1 < i2;
+    }
     return x1 < x2;
   }
 };
 
 } // namespace detail
 
-typedef std::set<std::unique_ptr<Item>, detail::ItemPtrLess> ItemSet;
+// Each item A -> a •X b in ItemSet I are sorted by X in ascending order,
+// so that items can be grouped by different X.
+typedef std::set<UPItem, detail::ItemPtrLess> ItemSet;
 
 } // namespace parser
 

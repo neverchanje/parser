@@ -2,6 +2,7 @@
 // Created by neverchanje on 12/27/15.
 //
 
+#include <boost/make_unique.hpp>
 #include "LAClosure.h"
 #include "First.h"
 
@@ -19,17 +20,16 @@ static SymbolSet calculateLA(SymbolID b, SymbolID la) {
   return symset;
 }
 
-LAItemSet LAClosure(std::vector<LAItem> &&I) {
-  LAItemSet clsr;
+ItemSet Closure(std::vector<LAItem> &&I) {
+  ItemSet clsr;
   SymbolID B, b;
   SymbolSet la_set;
-  LAItem ni;
 
   while (!I.empty()) {
     auto it = I.back();
     I.pop_back();
 
-    clsr.insert(it);
+    clsr.insert(boost::make_unique<LAItem>(LAItem(it)));
 
     if (it.AtEnd()) {
       continue;
@@ -45,9 +45,11 @@ LAItemSet LAClosure(std::vector<LAItem> &&I) {
 
       for (RuleID r : derives) {
         for (SymbolID la : la_set) {
-          ni = LAItem(r, 0, la);
-          if (clsr.find(ni) == clsr.end()) {
-            I.push_back(ni);
+          // to maintain the attribute of LAItem.
+          std::unique_ptr<LAItem> tmp(new LAItem(r, 0, la));
+          std::unique_ptr<Item> pni(tmp.release());
+          if (clsr.find(pni) == clsr.end()) {
+            I.push_back(LAItem(r, 0, la));
           }
         }
       }

@@ -16,7 +16,7 @@ ItemSet Closure(std::vector<Item> &&I) {
   while (!I.empty()) {
     auto &it = I.back();
     I.pop_back();
-    clsr.insert(boost::make_unique<Item>(Item(it)));
+    clsr.insert(boost::make_unique<Item>(Item(it.rule_id, it.offset)));
 
     if (it.AtEnd()) {
       continue;

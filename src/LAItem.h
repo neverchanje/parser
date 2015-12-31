@@ -5,6 +5,7 @@
 #ifndef PARSER_LAITEM_H
 #define PARSER_LAITEM_H
 
+#include <assert.h>
 #include "Item.h"
 
 namespace parser {
@@ -20,27 +21,21 @@ struct LAItem: public Item {
       lookahead(la) {
   }
 
-  void Print() const override;
-
   Item Next() const override {
     return LAItem(rule_id, offset + 1, lookahead);
   }
-};
 
-struct LAItemSetSort {
-// Each item A -> a •X b in ItemSet I are sorted by X in ascending order,
-// so that items can be grouped by different X.
-  inline bool operator()(const LAItem &i1, const LAItem &i2) const {
-    SymbolID x1 = i1.GetPointed();
-    SymbolID x2 = i2.GetPointed();
-    if (x1 == x2)
-      return std::tuple(i1.rule_id, i1.offset, i1.lookahead)
-          < std::tuple(i2.rule_id, i2.offset, i1.lookahead);
-    return x1 < x2;
+  bool CompareOthers(const Item &rhs) const override {
+    return lookahead < boost::any_cast<SymbolID>(rhs.Others());
   }
-};
 
-typedef std::set<LAItem, LAItemSetSort> LAItemSet;
+  boost::any Others() const override {
+    return lookahead;
+  }
+
+  std::string ToString() const override;
+
+};
 
 } // namespace parser
 

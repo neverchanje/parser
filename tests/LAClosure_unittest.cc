@@ -5,6 +5,7 @@
 #include "LAClosure.h"
 #include "Rule.h"
 #include "First.h"
+#include "ItemSetTestHelper.h"
 
 using namespace parser;
 
@@ -49,42 +50,46 @@ class LAClosureBasic1: public ::testing::Test {
 
 TEST_F(LAClosureBasic1, LAClosureBasic1_Test1) {
   // E -> •E + T, $
-  LAItemSet actual = LAClosure({LAItem(r1, 0, eor)});
+  ItemSet actual = Closure({LAItem(r1, 0, eor)});
 
-  LAItemSet expect(
-      {
-          LAItem(r1, 0, eor), // E -> •E plus T $ , $
-          LAItem(r1, 0, plus), // E -> •E plus T $ , plus
-          LAItem(r2, 0, plus), // E -> •T $ , plus
-          LAItem(r3, 0, plus), // T -> •T multiply F $ , plus
-          LAItem(r4, 0, plus), // T -> •F $ , plus
-          LAItem(r3, 0, multiply), // T -> •T multiply F $ , multiply
-          LAItem(r4, 0, multiply), // T -> •F $ , multiply
-          LAItem(r6, 0, plus), //  F -> •id $ , plus
-          LAItem(r6, 0, plus), //  F -> •id $ , multiply
-          LAItem(r5, 0, plus), //  F -> •left_bracket E right_bracket $ , plus
-          LAItem(r5, 0, multiply) //  F -> •left_bracket E right_bracket $ , multiply
-      });
+  ItemSet expect;
+  expect.insert(MakeLAItem(r1, 0, eor)); // E -> •E plus T $ , $
+  expect.insert(MakeLAItem(r1, 0, plus)); // E -> •E plus T $ , plus
+  expect.insert(MakeLAItem(r2, 0, plus)); // E -> •T $ , plus
+  expect.insert(MakeLAItem(r3, 0, plus)); // T -> •T multiply F $ , plus
+  expect.insert(MakeLAItem(r3, 0, eor)); // T -> •T multiply F $ , $
+  expect.insert(MakeLAItem(r3, 0, multiply)); // T -> •T multiply F $ , multiply
+  expect.insert(MakeLAItem(r4, 0, multiply)); // T -> •F $ , multiply
+  expect.insert(MakeLAItem(r4, 0, eor)); // T -> •F $ , $
+  expect.insert(MakeLAItem(r4, 0, plus)); // T -> •F $ , plus
+  expect.insert(MakeLAItem(r6, 0, plus)); //  F -> •id $ , plus
+  expect.insert(MakeLAItem(r5, 0, plus)); //  F -> •left_bracket E right_bracket $ , plus
+  expect.insert(MakeLAItem(r5, 0, eor)); //  F -> •left_bracket E right_bracket $ , $
+  expect.insert(MakeLAItem(r6, 0, eor)); //  F -> •id $ , $
+  expect.insert(MakeLAItem(r6, 0, multiply)); //  F -> •id $ , multiply
+  expect.insert(MakeLAItem(r5, 0, multiply)); //  F -> •left_bracket E right_bracket $ , multiply
 
-  EXPECT_EQ(expect, actual);
+  EXPECT_PRED_FORMAT2 (AssertItemSetCmp, expect, actual);
 }
 
 TEST_F(LAClosureBasic1, LAClosureBasic1_Test2) {
   // E -> E + •T , $
-  LAItemSet actual = LAClosure({LAItem(r1, 2, eor)});
+  ItemSet actual = Closure({LAItem(r1, 2, eor)});
 
 //  DumpClosure(actual);
-  LAItemSet expect(
-      {
-          LAItem(r1, 2, eor), //  E -> E plus •T $ , $
-          LAItem(r3, 0, eor), //  T -> •T multiply F $
-          LAItem(r4, 0, eor), //  T -> •F $
-          LAItem(r3, 0, multiply), //  T -> •T multiply F $
-          LAItem(r4, 0, multiply), //  T -> •F $
-          LAItem(r5, 0, eor), //  F -> •left_bracket E right_bracket $
-          LAItem(r6, 0, eor) //  F -> •id $
-      });
-  EXPECT_EQ(expect, actual);
+  ItemSet expect;
+
+  expect.insert(MakeLAItem(r1, 2, eor)); //  E -> E plus •T $ , $
+  expect.insert(MakeLAItem(r3, 0, eor)); //  T -> •T multiply F $ , $
+  expect.insert(MakeLAItem(r4, 0, eor)); //  T -> •F $ , $
+  expect.insert(MakeLAItem(r3, 0, multiply)); //  T -> •T multiply F $ , multiply
+  expect.insert(MakeLAItem(r4, 0, multiply)); //  T -> •F $ , multiply
+  expect.insert(MakeLAItem(r5, 0, eor)); //  F -> •left_bracket E right_bracket $, $
+  expect.insert(MakeLAItem(r6, 0, eor)); //  F -> •id $, $
+  expect.insert(MakeLAItem(r5, 0, multiply)); //  F -> •left_bracket E right_bracket $, multiply
+  expect.insert(MakeLAItem(r6, 0, multiply)); //  F -> •id $, multiply
+
+  EXPECT_PRED_FORMAT2 (AssertItemSetCmp, expect, actual);
 }
 
 class LAClosureBasic2: public ::testing::Test {
@@ -132,17 +137,21 @@ class LAClosureBasic2: public ::testing::Test {
 
 TEST_F(LAClosureBasic2, LAClosureBasic2_Test1) {
   // S_ -> •S, $
-  LAItemSet actual = LAClosure({LAItem(r1, 0, eor)});
+  ItemSet actual = Closure({LAItem(r1, 0, eor)});
 
-  LAItemSet expect(
-      {
-          LAItem(r1, 0, eor), //  S_ -> •S $ , $
-          LAItem(r2, 0, eor), //  S -> •L = R $ , $
-          LAItem(r3, 0, eor), //  S -> •R $ , $
-          LAItem(r4, 0, equal), //  L -> •* R $ , =
-          LAItem(r5, 0, equal), //  L -> •id $ , =
-          LAItem(r6, 0, eor) //  R -> •L $
-      });
+  ItemSet expect;
 
-  EXPECT_EQ(expect, actual);
+  expect.insert(MakeLAItem(r1, 0, eor)); //  S_ -> •S $ , $
+  expect.insert(MakeLAItem(r2, 0, eor)); //  S -> •L = R $ , $
+  expect.insert(MakeLAItem(r3, 0, eor)); //  S -> •R $ , $
+  expect.insert(MakeLAItem(r4, 0, equal)); //  L -> •* R $ , =
+  expect.insert(MakeLAItem(r5, 0, equal)); //  L -> •id $ , =
+  expect.insert(MakeLAItem(r6, 0, eor)); //  R -> •L $
+  expect.insert(MakeLAItem(r4, 0, eor)); //  L -> •* R $ , $
+  expect.insert(MakeLAItem(r5, 0, eor)); //  L -> •id $ , $
+
+
+  EXPECT_PRED_FORMAT2 (AssertItemSetCmp, expect, actual);
 }
+
+// TODO: Add an unit test from https://en.wikipedia.org/wiki/Canonical_LR_parser

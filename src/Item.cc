@@ -26,8 +26,4 @@ std::string Item::ToString() const {
 #undef RULE_RHS_SYMBOL_TAG
 #undef RULE_LHS_SYMBOL_TAG
 
-void Item::Print() const {
-  fprintf(stderr, "%s", ToString().c_str());
-}
-
 } // namespace parser
