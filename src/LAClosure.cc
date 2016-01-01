@@ -45,9 +45,7 @@ ItemSet Closure(std::vector<LAItem> &&I) {
 
       for (RuleID r : derives) {
         for (SymbolID la : la_set) {
-          // to maintain the attribute of LAItem.
-          std::unique_ptr<LAItem> tmp(new LAItem(r, 0, la));
-          std::unique_ptr<Item> pni(tmp.release());
+          std::unique_ptr<Item> pni(new LAItem(r, 0, la));
           if (clsr.find(pni) == clsr.end()) {
             I.push_back(LAItem(r, 0, la));
           }

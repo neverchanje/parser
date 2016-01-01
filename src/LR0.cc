@@ -40,10 +40,10 @@ Automaton Automaton::Make(RuleID init) {
     tmp.clear();
 
     for (auto i = clsr.begin(); i != clsr.end(); i++) {
-      const Rule &rule = i->GetRule();
+      const Rule &rule = (*i)->GetRule();
 
       // There's an X exists so that item A -> a •X b is in ItemSet I
-      X = i->GetPointed();
+      X = (*i)->GetPointed();
 
       // Y is the symbol id pointed by the next item.
       // If X exists, then Y must exist.
@@ -51,11 +51,11 @@ Automaton Automaton::Make(RuleID init) {
         Y = -1;
       } else {
         auto ni = std::next(i);
-        Y = ni->GetPointed();
+        Y = (*i)->GetPointed();
       }
 
-      if (!i->AtEnd()) {
-        tmp.insert(Item(i->rule_id, i->offset + 1));
+      if (!(*i)->AtEnd()) {
+        tmp.insert(Item((*i)->rule_id, (*i)->offset + 1));
       }
 
       if (X != Y) {

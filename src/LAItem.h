@@ -5,7 +5,7 @@
 #ifndef PARSER_LAITEM_H
 #define PARSER_LAITEM_H
 
-#include <assert.h>
+#include <boost/make_unique.hpp>
 #include "Item.h"
 
 namespace parser {
@@ -21,8 +21,8 @@ struct LAItem: public Item {
       lookahead(la) {
   }
 
-  Item Next() const override {
-    return LAItem(rule_id, offset + 1, lookahead);
+  std::unique_ptr<Item> Next() const override {
+    return std::unique_ptr<Item>(new LAItem(rule_id, offset + 1, lookahead));
   }
 
   bool CompareOthers(const Item &rhs) const override {

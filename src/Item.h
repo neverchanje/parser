@@ -43,17 +43,13 @@ struct Item {
     return RuleTable::GetRule(rule_id).GetRHSSize() <= offset;
   }
 
-  bool operator==(const Item &rhs) const {
-    return rule_id == rhs.rule_id && offset == rhs.offset
-        && CompareOthers(rhs) && CompareOthers(*this);
-  }
-
   // return true if Others() < rhs.Others();
   // return false here, since it's not required to be implemented in Item.
   virtual bool CompareOthers(const Item &rhs) const {
     return false;
   }
 
+  // TODO: replace boost::any.
   virtual boost::any Others() const {
     return 0;
   }
@@ -65,8 +61,8 @@ struct Item {
   }
 
   // TODO: return value should be unique_ptr
-  virtual Item Next() const {
-    return Item(rule_id, offset + 1);
+  virtual std::unique_ptr<Item> Next() const {
+    return std::unique_ptr<Item>(new Item(rule_id, offset));
   }
 };
 
