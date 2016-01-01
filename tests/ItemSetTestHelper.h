@@ -23,14 +23,6 @@ inline bool ItemSetCmp(const ItemSet &lhs,
                  });
 }
 
-std::unique_ptr<Item> MakeItem(RuleID r, size_t off) {
-  return boost::make_unique<Item>(RuleID(r), size_t(off));
-}
-
-std::unique_ptr<LAItem> MakeLAItem(RuleID r, size_t off, SymbolID la) {
-  return boost::make_unique<LAItem>(LAItem(r, off, la));
-}
-
 std::string ToString(const ItemSet &is) {
   std::string ret;
   for (auto &it : is) {

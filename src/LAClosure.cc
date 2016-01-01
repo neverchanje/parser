@@ -29,7 +29,7 @@ ItemSet Closure(std::vector<LAItem> &&I) {
     auto it = I.back();
     I.pop_back();
 
-    clsr.insert(boost::make_unique<LAItem>(LAItem(it)));
+    clsr.insert(std::unique_ptr<LAItem>(new LAItem(it)));
 
     if (it.AtEnd()) {
       continue;

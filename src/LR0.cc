@@ -13,29 +13,31 @@ namespace parser {
 
 namespace LR0 {
 
+State Automaton::startState(RuleID init) {
+  ItemSet iset;
+  iset.insert(Item::MakeUnique(init, 0));
+  return MakeState(std::move(iset), DFA::State(DFA::START_STATE));
+}
+
 #define QFRONT_ISET(que) (que.front()->first)
 #define QFRONT_STATE(que) (que.front()->second)
-
-static inline std::pair<ItemSet, DFA::State> startState(RuleID init) {
-  return std::make_pair(ItemSet({Item(init, 0)}), DFA::State(DFA::START_STATE));
-}
 
 Automaton Automaton::Make(RuleID init) {
   Automaton atm;
 
-  //Each ItemSet in stateSet contains only kernel items.
+  //Each ItemSet in StateTable contains only kernel items.
   StateTable table;
   std::queue<StateTable::iterator> que;
   SymbolID X, Y;
   ItemSet clsr, tmp;
   std::pair<StateTable::iterator, bool> ret;
 
-  ret = table.insert(startState(init));
+  ret = table.insert(atm.startState(init));
   que.push(ret.first);
 
   while (!que.empty()) {
-    const auto &I = QFRONT_ISET(que); // I contains only kernel items.
-    clsr = Closure(std::vector<Item>(I.begin(), I.end()));
+    const auto &IS = QFRONT_ISET(que); // I contains only kernel items.
+    clsr = atm.closure(IS.begin(), IS.end());
     DumpClosure(clsr);
     tmp.clear();
 
@@ -51,11 +53,11 @@ Automaton Automaton::Make(RuleID init) {
         Y = -1;
       } else {
         auto ni = std::next(i);
-        Y = (*i)->GetPointed();
+        Y = (*ni)->GetPointed();
       }
 
       if (!(*i)->AtEnd()) {
-        tmp.insert(Item((*i)->rule_id, (*i)->offset + 1));
+        tmp.insert((*i)->Next());
       }
 
       if (X != Y) {
@@ -89,10 +91,18 @@ void Automaton::Dump() const {
   fprintf(stderr, "------- Ending of dumping the LR0. -------\n");
 }
 
-size_t ItemSetHasher::operator()(const ItemSet &val) const {
-  return boost::hash_value(val);
+ItemSet Automaton::closure(ItemSet::iterator first, ItemSet::iterator last) const {
+  std::vector<Item> vec;
+  for (auto it = first; it != last; it++) {
+    vec.push_back(*(*it));
+  }
+  return Closure(std::move(vec));
 }
 
 } // namespace LR0
+
+size_t ItemSetHasher::operator()(const ItemSet &val) const {
+  return boost::hash_value(val);
+}
 
 } // namespace parser

@@ -4,7 +4,6 @@
 
 #include <algorithm>
 #include <unordered_set>
-#include <boost/make_unique.hpp>
 #include "Closure.h"
 
 namespace parser {
@@ -16,7 +15,7 @@ ItemSet Closure(std::vector<Item> &&I) {
   while (!I.empty()) {
     auto &it = I.back();
     I.pop_back();
-    clsr.insert(boost::make_unique<Item>(Item(it.rule_id, it.offset)));
+    clsr.insert(Item::MakeUnique(it.rule_id, it.offset));
 
     if (it.AtEnd()) {
       continue;
@@ -24,7 +23,7 @@ ItemSet Closure(std::vector<Item> &&I) {
 
     SymbolID sid = it.GetPointed();
 
-    // Expand the non-terminal sid and check it has not been expanded.
+    // Expand the non-terminal sid and check has it not been expanded.
     if (Symbol::IsNonTerminal(sid) && symset.find(sid) == symset.end()) {
       const auto &derives = RuleTable::GetDerives(sid);
       for (RuleID r : derives) {

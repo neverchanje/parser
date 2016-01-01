@@ -14,6 +14,9 @@ namespace parser {
 
 typedef int RuleID;
 
+class Item;
+typedef std::unique_ptr<Item> UPItem;
+
 struct Item {
   RuleID rule_id;
   size_t offset;
@@ -23,6 +26,10 @@ struct Item {
   Item(RuleID ruleID, size_t off) :
       rule_id(ruleID),
       offset(off) {
+  }
+
+  static UPItem MakeUnique(RuleID r, size_t off) {
+    return UPItem(new Item(r, off));
   }
 
   SymbolID GetPointed() const {
@@ -43,10 +50,11 @@ struct Item {
     return RuleTable::GetRule(rule_id).GetRHSSize() <= offset;
   }
 
-  // return true if Others() < rhs.Others();
+  // return true if std::tuple<>
   // return false here, since it's not required to be implemented in Item.
-  virtual bool CompareOthers(const Item &rhs) const {
-    return false;
+  virtual bool Compare(const Item &rhs) const {
+    return std::pair<RuleID, size_t>(rule_id, rhs.offset) <
+        std::pair<RuleID, size_t>(rule_id, rhs.offset);
   }
 
   // TODO: replace boost::any.
@@ -60,13 +68,10 @@ struct Item {
     fprintf(stderr, "%s\n", ToString().c_str());
   }
 
-  // TODO: return value should be unique_ptr
   virtual std::unique_ptr<Item> Next() const {
-    return std::unique_ptr<Item>(new Item(rule_id, offset));
+    return std::unique_ptr<Item>(new Item(rule_id, offset + 1));
   }
 };
-
-typedef std::unique_ptr<Item> UPItem;
 
 namespace detail {
 
@@ -77,12 +82,7 @@ struct ItemPtrLess {
     SymbolID x1 = p1->GetPointed();
     SymbolID x2 = p2->GetPointed();
     if (x1 == x2) {
-      std::pair<RuleID, size_t> i1(p1->rule_id, p1->offset);
-      std::pair<RuleID, size_t> i2(p2->rule_id, p2->offset);
-      if (i2 == i1) {
-        return p1->CompareOthers(*p2);
-      }
-      return i1 < i2;
+      return p1->Compare(*p2);
     }
     return x1 < x2;
   }

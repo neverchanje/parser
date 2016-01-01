@@ -53,21 +53,21 @@ TEST_F(LAClosureBasic1, LAClosureBasic1_Test1) {
   ItemSet actual = Closure({LAItem(r1, 0, eor)});
 
   ItemSet expect;
-  expect.insert(MakeLAItem(r1, 0, eor)); // E -> •E plus T $ , $
-  expect.insert(MakeLAItem(r1, 0, plus)); // E -> •E plus T $ , plus
-  expect.insert(MakeLAItem(r2, 0, plus)); // E -> •T $ , plus
-  expect.insert(MakeLAItem(r3, 0, plus)); // T -> •T multiply F $ , plus
-  expect.insert(MakeLAItem(r3, 0, eor)); // T -> •T multiply F $ , $
-  expect.insert(MakeLAItem(r3, 0, multiply)); // T -> •T multiply F $ , multiply
-  expect.insert(MakeLAItem(r4, 0, multiply)); // T -> •F $ , multiply
-  expect.insert(MakeLAItem(r4, 0, eor)); // T -> •F $ , $
-  expect.insert(MakeLAItem(r4, 0, plus)); // T -> •F $ , plus
-  expect.insert(MakeLAItem(r6, 0, plus)); //  F -> •id $ , plus
-  expect.insert(MakeLAItem(r5, 0, plus)); //  F -> •left_bracket E right_bracket $ , plus
-  expect.insert(MakeLAItem(r5, 0, eor)); //  F -> •left_bracket E right_bracket $ , $
-  expect.insert(MakeLAItem(r6, 0, eor)); //  F -> •id $ , $
-  expect.insert(MakeLAItem(r6, 0, multiply)); //  F -> •id $ , multiply
-  expect.insert(MakeLAItem(r5, 0, multiply)); //  F -> •left_bracket E right_bracket $ , multiply
+  expect.insert(LAItem::MakeUnique(r1, 0, eor)); // E -> •E plus T $ , $
+  expect.insert(LAItem::MakeUnique(r1, 0, plus)); // E -> •E plus T $ , plus
+  expect.insert(LAItem::MakeUnique(r2, 0, plus)); // E -> •T $ , plus
+  expect.insert(LAItem::MakeUnique(r3, 0, plus)); // T -> •T multiply F $ , plus
+  expect.insert(LAItem::MakeUnique(r3, 0, eor)); // T -> •T multiply F $ , $
+  expect.insert(LAItem::MakeUnique(r3, 0, multiply)); // T -> •T multiply F $ , multiply
+  expect.insert(LAItem::MakeUnique(r4, 0, multiply)); // T -> •F $ , multiply
+  expect.insert(LAItem::MakeUnique(r4, 0, eor)); // T -> •F $ , $
+  expect.insert(LAItem::MakeUnique(r4, 0, plus)); // T -> •F $ , plus
+  expect.insert(LAItem::MakeUnique(r6, 0, plus)); //  F -> •id $ , plus
+  expect.insert(LAItem::MakeUnique(r5, 0, plus)); //  F -> •left_bracket E right_bracket $ , plus
+  expect.insert(LAItem::MakeUnique(r5, 0, eor)); //  F -> •left_bracket E right_bracket $ , $
+  expect.insert(LAItem::MakeUnique(r6, 0, eor)); //  F -> •id $ , $
+  expect.insert(LAItem::MakeUnique(r6, 0, multiply)); //  F -> •id $ , multiply
+  expect.insert(LAItem::MakeUnique(r5, 0, multiply)); //  F -> •left_bracket E right_bracket $ , multiply
 
   EXPECT_PRED_FORMAT2 (AssertItemSetCmp, expect, actual);
 }
@@ -79,15 +79,15 @@ TEST_F(LAClosureBasic1, LAClosureBasic1_Test2) {
 //  DumpClosure(actual);
   ItemSet expect;
 
-  expect.insert(MakeLAItem(r1, 2, eor)); //  E -> E plus •T $ , $
-  expect.insert(MakeLAItem(r3, 0, eor)); //  T -> •T multiply F $ , $
-  expect.insert(MakeLAItem(r4, 0, eor)); //  T -> •F $ , $
-  expect.insert(MakeLAItem(r3, 0, multiply)); //  T -> •T multiply F $ , multiply
-  expect.insert(MakeLAItem(r4, 0, multiply)); //  T -> •F $ , multiply
-  expect.insert(MakeLAItem(r5, 0, eor)); //  F -> •left_bracket E right_bracket $, $
-  expect.insert(MakeLAItem(r6, 0, eor)); //  F -> •id $, $
-  expect.insert(MakeLAItem(r5, 0, multiply)); //  F -> •left_bracket E right_bracket $, multiply
-  expect.insert(MakeLAItem(r6, 0, multiply)); //  F -> •id $, multiply
+  expect.insert(LAItem::MakeUnique(r1, 2, eor)); //  E -> E plus •T $ , $
+  expect.insert(LAItem::MakeUnique(r3, 0, eor)); //  T -> •T multiply F $ , $
+  expect.insert(LAItem::MakeUnique(r4, 0, eor)); //  T -> •F $ , $
+  expect.insert(LAItem::MakeUnique(r3, 0, multiply)); //  T -> •T multiply F $ , multiply
+  expect.insert(LAItem::MakeUnique(r4, 0, multiply)); //  T -> •F $ , multiply
+  expect.insert(LAItem::MakeUnique(r5, 0, eor)); //  F -> •left_bracket E right_bracket $, $
+  expect.insert(LAItem::MakeUnique(r6, 0, eor)); //  F -> •id $, $
+  expect.insert(LAItem::MakeUnique(r5, 0, multiply)); //  F -> •left_bracket E right_bracket $, multiply
+  expect.insert(LAItem::MakeUnique(r6, 0, multiply)); //  F -> •id $, multiply
 
   EXPECT_PRED_FORMAT2 (AssertItemSetCmp, expect, actual);
 }
@@ -141,14 +141,14 @@ TEST_F(LAClosureBasic2, LAClosureBasic2_Test1) {
 
   ItemSet expect;
 
-  expect.insert(MakeLAItem(r1, 0, eor)); //  S_ -> •S $ , $
-  expect.insert(MakeLAItem(r2, 0, eor)); //  S -> •L = R $ , $
-  expect.insert(MakeLAItem(r3, 0, eor)); //  S -> •R $ , $
-  expect.insert(MakeLAItem(r4, 0, equal)); //  L -> •* R $ , =
-  expect.insert(MakeLAItem(r5, 0, equal)); //  L -> •id $ , =
-  expect.insert(MakeLAItem(r6, 0, eor)); //  R -> •L $
-  expect.insert(MakeLAItem(r4, 0, eor)); //  L -> •* R $ , $
-  expect.insert(MakeLAItem(r5, 0, eor)); //  L -> •id $ , $
+  expect.insert(LAItem::MakeUnique(r1, 0, eor)); //  S_ -> •S $ , $
+  expect.insert(LAItem::MakeUnique(r2, 0, eor)); //  S -> •L = R $ , $
+  expect.insert(LAItem::MakeUnique(r3, 0, eor)); //  S -> •R $ , $
+  expect.insert(LAItem::MakeUnique(r4, 0, equal)); //  L -> •* R $ , =
+  expect.insert(LAItem::MakeUnique(r5, 0, equal)); //  L -> •id $ , =
+  expect.insert(LAItem::MakeUnique(r6, 0, eor)); //  R -> •L $
+  expect.insert(LAItem::MakeUnique(r4, 0, eor)); //  L -> •* R $ , $
+  expect.insert(LAItem::MakeUnique(r5, 0, eor)); //  L -> •id $ , $
 
 
   EXPECT_PRED_FORMAT2 (AssertItemSetCmp, expect, actual);

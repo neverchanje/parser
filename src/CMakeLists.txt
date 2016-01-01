@@ -1,7 +1,7 @@
 
 set(PARSER_SRC
         ${PARSER_SOURCE_DIR}/LR0.cc
-        #      ${PARSER_SOURCE_DIR}/LR1.cc
+        ${PARSER_SOURCE_DIR}/LR1.cc
         ${PARSER_SOURCE_DIR}/DFA.cc
         ${PARSER_SOURCE_DIR}/Symbol.cc
         ${PARSER_SOURCE_DIR}/Closure.cc

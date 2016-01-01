@@ -4,8 +4,8 @@ include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 add_subdirectory(lib/gtest-1.7.0)
 
 set(PARSER_SRC
-        #        ${PARSER_SOURCE_DIR}/LR0.cc
-        #        ${PARSER_SOURCE_DIR}/LR1.cc
+        ${PARSER_SOURCE_DIR}/LR0.cc
+        ${PARSER_SOURCE_DIR}/LR1.cc
         ${PARSER_SOURCE_DIR}/DFA.cc
         ${PARSER_SOURCE_DIR}/Symbol.cc
         ${PARSER_SOURCE_DIR}/Closure.cc
@@ -43,7 +43,12 @@ target_link_libraries(Closure_unittest gtest gtest_main)
 add_executable(LR0_unittest
         LR0_unittest.cc
         ItemSetTestHelper.h
-        ${PARSER_SRC}
+        ${PARSER_SOURCE_DIR}/LR0.cc
+        ${PARSER_SOURCE_DIR}/DFA.cc
+        ${PARSER_SOURCE_DIR}/Symbol.cc
+        ${PARSER_SOURCE_DIR}/Closure.cc
+        ${PARSER_SOURCE_DIR}/Rule.cc
+        ${PARSER_SOURCE_DIR}/Item.cc
         )
 target_link_libraries(LR0_unittest gtest gtest_main)
 
