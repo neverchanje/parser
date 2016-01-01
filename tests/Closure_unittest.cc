@@ -8,6 +8,8 @@
 
 using namespace parser;
 
+#define EXPECT_INSERT_ITEM(r, off) assert(expect.insert(Item::MakeUnique(r, off)).second)
+
 class ClosureBasic1: public ::testing::Test {
  protected:
 
@@ -51,15 +53,15 @@ TEST_F(ClosureBasic1, ClosureBasic1_Test1) {
   // E -> •E + T
   ItemSet actual = Closure({Item(r1, 0)});
 
-//  DumpClosure(actual);
+  DumpClosure(actual);
 
   ItemSet expect;
-  expect.insert(Item::MakeUnique(r1, 0)); //  E -> •E plus T $
-  expect.insert(Item::MakeUnique(r2, 0)); //  E -> •T $
-  expect.insert(Item::MakeUnique(r3, 0)); //  T -> •T multiply F $
-  expect.insert(Item::MakeUnique(r4, 0)); //  T -> •F $
-  expect.insert(Item::MakeUnique(r5, 0)); //  F -> •left_bracket E right_bracket $
-  expect.insert(Item::MakeUnique(r6, 0)); //  F -> •id $
+  EXPECT_INSERT_ITEM(r1, 0); //  E -> •E plus T $
+  EXPECT_INSERT_ITEM(r2, 0); //  E -> •T $
+  EXPECT_INSERT_ITEM(r3, 0); //  T -> •T multiply F $
+  EXPECT_INSERT_ITEM(r4, 0); //  T -> •F $
+  EXPECT_INSERT_ITEM(r5, 0); //  F -> •left_bracket E right_bracket $
+  EXPECT_INSERT_ITEM(r6, 0); //  F -> •id $
 
   EXPECT_PRED_FORMAT2 (AssertItemSetCmp, expect, actual);
 }
@@ -68,14 +70,14 @@ TEST_F(ClosureBasic1, ClosureBasic1_Test2) {
   // E -> E + •T
   ItemSet actual = Closure({Item(r1, 2)});
 
-//  DumpClosure(actual);
+  DumpClosure(actual);
 
   ItemSet expect;
-  expect.insert(Item::MakeUnique(r1, 2)); //  E -> E plus •T $
-  expect.insert(Item::MakeUnique(r3, 0)); //  T -> •T multiply F $
-  expect.insert(Item::MakeUnique(r4, 0)); //  T -> •F $
-  expect.insert(Item::MakeUnique(r6, 0)); //  F -> •id $
-  expect.insert(Item::MakeUnique(r5, 0)); //  F -> •left_bracket E right_bracket $
+  EXPECT_INSERT_ITEM(r1, 2); //  E -> E plus •T $
+  EXPECT_INSERT_ITEM(r3, 0); //  T -> •T multiply F $
+  EXPECT_INSERT_ITEM(r4, 0); //  T -> •F $
+  EXPECT_INSERT_ITEM(r6, 0); //  F -> •id $
+  EXPECT_INSERT_ITEM(r5, 0); //  F -> •left_bracket E right_bracket $
 
   EXPECT_PRED_FORMAT2 (AssertItemSetCmp, expect, actual);
 }
@@ -127,15 +129,15 @@ TEST_F(ClosureBasic2, ClosureBasic2_Test1) {
   // S_ -> •S
   ItemSet actual = Closure({Item(r1, 0)});
 
-//  DumpClosure(actual);
+  DumpClosure(actual);
 
   ItemSet expect;
-  expect.insert(Item::MakeUnique(r6, 0)); //  R -> •L $
-  expect.insert(Item::MakeUnique(r3, 0)); //  S -> •R $
-  expect.insert(Item::MakeUnique(r5, 0)); //  L -> •id $
-  expect.insert(Item::MakeUnique(r4, 0)); //  L -> •* R $
-  expect.insert(Item::MakeUnique(r1, 0)); //  S_ -> •S $
-  expect.insert(Item::MakeUnique(r2, 0)); //  S -> •L = R $
+  EXPECT_INSERT_ITEM(r6, 0); //  R -> •L $
+  EXPECT_INSERT_ITEM(r3, 0); //  S -> •R $
+  EXPECT_INSERT_ITEM(r5, 0); //  L -> •id $
+  EXPECT_INSERT_ITEM(r4, 0); //  L -> •* R $
+  EXPECT_INSERT_ITEM(r1, 0); //  S_ -> •S $
+  EXPECT_INSERT_ITEM(r2, 0); //  S -> •L = R $
 
   EXPECT_PRED_FORMAT2 (AssertItemSetCmp, expect, actual);
 }

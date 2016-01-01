@@ -2,6 +2,8 @@
 // Created by neverchanje on 12/22/15.
 //
 
+#include <string>
+#include <sstream>
 #include "DFA.h"
 
 namespace parser {
@@ -26,13 +28,23 @@ State DFA::GetTrans(State from, SymbolID sym) const {
 
 void DFA::Dump() const {
   fprintf(stderr, "\n------- Begining of dumping the DFA. -------\n");
+  fprintf(stderr, "%s\n", ToString().c_str());
+  fprintf(stderr, "------- Ending of dumping the DFA. -------\n");
+}
+
+std::string DFA::ToString() const {
+  std::string ret;
+  std::stringstream ss;
   for (auto t1 = trans_.begin(); t1 != trans_.end(); t1++) {
     for (auto t2 = (*t1).second.begin(); t2 != (*t1).second.end(); t2++) {
-      fprintf(stderr, "<from:%d, sym:%d, to:%d>\n",
-              (*t1).first, (*t2).first, (*t2).second);
+      ss << "<from:" << (*t1).first
+          << ", sym:" << (*t2).first
+          << ", to:" << (*t2).second
+          << ">\n";
+      ss >> ret;
     }
   }
-  fprintf(stderr, "------- Ending of dumping the DFA. -------\n");
+  return ret;
 }
 
 } // namespace parser

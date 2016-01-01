@@ -18,14 +18,13 @@ State Automaton::startState(RuleID init) {
   return MakeState(std::move(iset), DFA::State(DFA::START_STATE));
 }
 
-ItemSet Automaton::closure(ItemSet::iterator first, ItemSet::iterator last) {
+ItemSet Automaton::closure(ItemSet::iterator first, ItemSet::iterator last) const {
   std::vector<LAItem> vec;
   for (auto it = first; it != last; it++) {
     vec.push_back(DownCast<LAItem>(*it));
   }
   return Closure(std::move(vec));
 }
-
 } // namespace LR1
 
 } // namespace parser

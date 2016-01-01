@@ -38,7 +38,7 @@ Automaton Automaton::Make(RuleID init) {
   while (!que.empty()) {
     const auto &IS = QFRONT_ISET(que); // I contains only kernel items.
     clsr = atm.closure(IS.begin(), IS.end());
-    DumpClosure(clsr);
+    /// DumpClosure(clsr);
     tmp.clear();
 
     for (auto i = clsr.begin(); i != clsr.end(); i++) {
@@ -72,6 +72,7 @@ Automaton Automaton::Make(RuleID init) {
     }
 
     que.pop();
+    break;
   }
 
   return atm;
@@ -93,8 +94,8 @@ void Automaton::Dump() const {
 
 ItemSet Automaton::closure(ItemSet::iterator first, ItemSet::iterator last) const {
   std::vector<Item> vec;
-  for (auto it = first; it != last; it++) {
-    vec.push_back(*(*it));
+  for (; first != last; first++) {
+    vec.push_back(*(*first));
   }
   return Closure(std::move(vec));
 }

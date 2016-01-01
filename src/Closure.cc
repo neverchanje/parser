@@ -32,7 +32,6 @@ ItemSet Closure(std::vector<Item> &&I) {
       symset.insert(sid);
     }
   }
-
   return clsr;
 }
 
@@ -40,7 +39,6 @@ void DumpClosure(const ItemSet &clsr) {
   fprintf(stderr, "\n------- Beginning of dumping the Closure. -------\n");
   for (auto &it : clsr) {
     it->Print();
-    fprintf(stderr, "\n");
   }
   fprintf(stderr, "------- Ending of dumping the Closure. -------\n");
 }

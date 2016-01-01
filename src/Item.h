@@ -53,8 +53,8 @@ struct Item {
   // return true if std::tuple<>
   // return false here, since it's not required to be implemented in Item.
   virtual bool Compare(const Item &rhs) const {
-    return std::pair<RuleID, size_t>(rule_id, rhs.offset) <
-        std::pair<RuleID, size_t>(rule_id, rhs.offset);
+    return (rule_id == rhs.rule_id && offset < rhs.offset)
+        || rule_id < rhs.rule_id;
   }
 
   // TODO: replace boost::any.

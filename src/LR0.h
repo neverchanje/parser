@@ -35,6 +35,9 @@ class Automaton {
 
   void Dump() const;
 
+  // (DEBUG)
+  const DFA &GetDFA() const { return dfa_; }
+
  private:
 
   Automaton() = default;

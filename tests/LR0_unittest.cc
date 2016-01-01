@@ -45,7 +45,7 @@ TEST(LR0_Basics1, LR0_Basics1_Test) {
       r5 = Rule::Make(L, {id}).GetID(),
       r6 = Rule::Make(R, {L}).GetID();
 
-  auto atm = LR0::Automaton::Make(r1);
+  auto actual = LR0::Automaton::Make(r1);
 
 //  <from:8, sym:L, to:7>
 //  <from:8, sym:R, to:9>
@@ -61,7 +61,24 @@ TEST(LR0_Basics1, LR0_Basics1_Test) {
 //  <from:0, sym:S, to:3>
 //  <from:0, sym:id, to:2>
 //  <from:0, sym:*, to:1>
-  atm.Dump();
+  actual.Dump();
+
+  DFA expect;
+  expect.AddTrans(8, L, 7);
+  expect.AddTrans(8, R, 9);
+  expect.AddTrans(8, id, 2);
+  expect.AddTrans(8, multiply, 1);
+  expect.AddTrans(1, L, 7);
+  expect.AddTrans(1, R, 6);
+  expect.AddTrans(1, id, 2);
+  expect.AddTrans(1, multiply, 1);
+  expect.AddTrans(5, equal, 8);
+  expect.AddTrans(0, L, 5);
+  expect.AddTrans(0, R, 4);
+  expect.AddTrans(0, S, 3);
+  expect.AddTrans(0, id, 2);
+  expect.AddTrans(0, multiply, 1);
+
 }
 
 
