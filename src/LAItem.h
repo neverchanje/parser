@@ -38,10 +38,10 @@ struct LAItem: public Item {
 
   std::size_t HashValue() const override;
 
-  bool operator==(const LAItem &rhs) const override {
+  bool operator==(const Item &rhs) const override {
     return rule_id == rhs.rule_id
         && offset == rhs.offset
-        && lookahead == rhs.lookahead;
+        && lookahead == boost::any_cast<SymbolID>(rhs.Others());
   }
 
   boost::any Others() const override {

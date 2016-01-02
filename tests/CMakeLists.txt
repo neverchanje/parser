@@ -63,6 +63,7 @@ add_executable(LAClosure_unittest
         LAClosure_unittest.cc
         ${PARSER_SOURCE_DIR}/Symbol.cc
         ${PARSER_SOURCE_DIR}/Closure.cc
+        ${PARSER_SOURCE_DIR}/LAClosure.cc
         ${PARSER_SOURCE_DIR}/Rule.cc
         ${PARSER_SOURCE_DIR}/Item.cc
         ${PARSER_SOURCE_DIR}/First.cc
