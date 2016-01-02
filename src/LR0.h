@@ -12,15 +12,18 @@ namespace parser {
 
 typedef int RuleID;
 
-struct ItemSetHasher {
-  size_t operator()(const ItemSet &val) const;
-};
-
 namespace LR0 {
 
 typedef std::pair<ItemSet, DFA::State> State;
 
-typedef std::unordered_map<ItemSet, DFA::State, ItemSetHasher> StateTable;
+struct ItemSetHasher {
+  size_t operator()(const ItemSet &val) const;
+};
+
+typedef std::unordered_map<ItemSet,
+                           DFA::State,
+                           ItemSetHasher,
+                           ItemSetEqual> StateTable;
 
 inline State MakeState(ItemSet &&iset, DFA::State &&state) {
   return std::make_pair(std::move(iset), state);
@@ -48,7 +51,8 @@ class Automaton {
 
   virtual State startState(RuleID init);
 
-  virtual ItemSet closure(ItemSet::iterator first, ItemSet::iterator last) const;
+  virtual ItemSet closure(ItemSet::iterator first,
+                          ItemSet::iterator last) const;
 
 };
 

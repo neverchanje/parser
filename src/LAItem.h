@@ -30,10 +30,18 @@ struct LAItem: public Item {
     return UPItem(new LAItem(rule_id, offset + 1, lookahead));
   }
 
-  bool Compare(const Item &rhs) const override {
+  bool operator<(const Item &rhs) const override {
     typedef std::tuple<RuleID, size_t, SymbolID> LAItemTuple;
     return LAItemTuple(rule_id, offset, lookahead) <
         LAItemTuple(rhs.rule_id, rhs.offset, boost::any_cast<SymbolID>(rhs.Others()));
+  }
+
+  std::size_t HashValue() const override;
+
+  bool operator==(const LAItem &rhs) const override {
+    return rule_id == rhs.rule_id
+        && offset == rhs.offset
+        && lookahead == rhs.lookahead;
   }
 
   boost::any Others() const override {

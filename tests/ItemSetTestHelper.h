@@ -11,19 +11,6 @@
 
 namespace parser {
 
-// For the use of gtest.
-// Return true if expect == actual.
-inline bool ItemSetCmp(const ItemSet &expect,
-                       const ItemSet &actual) {
-  return actual.size() == expect.size() &&
-      std::equal(actual.begin(), actual.end(), expect.begin(),
-                 [](const std::unique_ptr<Item> &p1,
-                    const std::unique_ptr<Item> &p2) {
-                   detail::ItemPtrLess cmp;
-                   return !cmp(p1, p2) && !cmp(p2, p1);
-                 });
-}
-
 std::string ToString(const ItemSet &is) {
   std::string ret;
   for (auto &it : is) {
@@ -36,7 +23,8 @@ std::string ToString(const ItemSet &is) {
                                             const char *actual_expr,
                                             const ItemSet &expect,
                                             const ItemSet &actual) {
-  if (ItemSetCmp(expect, actual))
+  ItemSetEqual itemset_eq_fn;
+  if (itemset_eq_fn(expect, actual))
     return ::testing::AssertionSuccess();
 
   auto res = ::testing::AssertionFailure();

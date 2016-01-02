@@ -36,9 +36,10 @@ Automaton Automaton::Make(RuleID init) {
   que.push(ret.first);
 
   while (!que.empty()) {
-    const auto &IS = QFRONT_ISET(que); // I contains only kernel items.
+    const ItemSet &IS = QFRONT_ISET(que); // I contains only kernel items.
+    DumpClosure(IS);
     clsr = atm.closure(IS.begin(), IS.end());
-    /// DumpClosure(clsr);
+//    DumpClosure(clsr);
     tmp.clear();
 
     for (auto i = clsr.begin(); i != clsr.end(); i++) {
@@ -52,16 +53,16 @@ Automaton Automaton::Make(RuleID init) {
       if (std::next(i) == clsr.end()) {
         Y = -1;
       } else {
-        auto ni = std::next(i);
-        Y = (*ni)->GetPointed();
+        Y = (*std::next(i))->GetPointed();
       }
 
       if (!(*i)->AtEnd()) {
         tmp.insert((*i)->Next());
       }
 
-      if (X != Y) {
-        ret = table.insert(std::make_pair(std::move(tmp), -1));
+      // skip if tmp is empty
+      if (X != Y && !tmp.empty()) {
+        ret = table.insert(MakeState(std::move(tmp), -1));
         if (ret.second) {
           ret.first->second = atm.dfa_.MakeState();
           que.push(ret.first);
@@ -70,9 +71,7 @@ Automaton Automaton::Make(RuleID init) {
         tmp.clear();
       }
     }
-
     que.pop();
-    break;
   }
 
   return atm;
@@ -100,10 +99,22 @@ ItemSet Automaton::closure(ItemSet::iterator first, ItemSet::iterator last) cons
   return Closure(std::move(vec));
 }
 
-} // namespace LR0
-
 size_t ItemSetHasher::operator()(const ItemSet &val) const {
-  return boost::hash_value(val);
+  std::size_t seed = 0;
+  for (const auto &it : val) {
+    boost::hash_combine(seed, it->HashValue());
+  }
+  return seed;
 }
+
+namespace {
+namespace boost {
+inline std::size_t hash(const UPItem &val) {
+  return val->HashValue();
+}
+}
+}
+
+} // namespace LR0
 
 } // namespace parser

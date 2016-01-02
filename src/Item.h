@@ -47,15 +47,19 @@ struct Item {
   // The return value of AtEnd denotes whether the item hits the end, which means
   // its dot is on the left of the end symbol $.
   bool AtEnd() const {
-    return RuleTable::GetRule(rule_id).GetRHSSize() <= offset;
+    return RuleTable::GetRule(rule_id).GetRHSSize() <= offset + 1;
   }
 
-  // return true if std::tuple<>
-  // return false here, since it's not required to be implemented in Item.
-  virtual bool Compare(const Item &rhs) const {
+  virtual bool operator<(const Item &rhs) const {
     return (rule_id == rhs.rule_id && offset < rhs.offset)
         || rule_id < rhs.rule_id;
   }
+
+  virtual bool operator==(const Item &rhs) const {
+    return rule_id == rhs.rule_id && offset == rhs.offset;
+  }
+
+  virtual std::size_t HashValue() const;
 
   // TODO: replace boost::any.
   virtual boost::any Others() const {
@@ -82,7 +86,7 @@ struct ItemPtrLess {
     SymbolID x1 = p1->GetPointed();
     SymbolID x2 = p2->GetPointed();
     if (x1 == x2) {
-      return p1->Compare(*p2);
+      return (*p1) < (*p2);
     }
     return x1 < x2;
   }
@@ -93,6 +97,20 @@ struct ItemPtrLess {
 // Each item A -> a •X b in ItemSet I are sorted by X in ascending order,
 // so that items can be grouped by different X.
 typedef std::set<UPItem, detail::ItemPtrLess> ItemSet;
+
+// For the use in gtest.
+// And also for the use in LR0::StateTable.
+struct ItemSetEqual {
+  inline bool operator()(const ItemSet &expect, const ItemSet &actual) const {
+    return actual.size() == expect.size() &&
+        std::equal(actual.begin(), actual.end(), expect.begin(),
+                   [](const std::unique_ptr<Item> &p1,
+                      const std::unique_ptr<Item> &p2) {
+                     detail::ItemPtrLess cmp;
+                     return (*p1) == (*p2);
+                   });
+  }
+};
 
 } // namespace parser
 

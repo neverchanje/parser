@@ -61,6 +61,12 @@ target_link_libraries(First_unittest gtest gtest_main)
 
 add_executable(LAClosure_unittest
         LAClosure_unittest.cc
-        ${PARSER_SRC}
+        ${PARSER_SOURCE_DIR}/Symbol.cc
+        ${PARSER_SOURCE_DIR}/Closure.cc
+        ${PARSER_SOURCE_DIR}/Rule.cc
+        ${PARSER_SOURCE_DIR}/Item.cc
+        ${PARSER_SOURCE_DIR}/First.cc
+        ${PARSER_SOURCE_DIR}/LAItem.cc
+        ItemSetTestHelper.h
         )
 target_link_libraries(LAClosure_unittest gtest gtest_main)
