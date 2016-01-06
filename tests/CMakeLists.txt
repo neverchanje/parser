@@ -71,3 +71,19 @@ add_executable(LAClosure_unittest
         ItemSetTestHelper.h
         )
 target_link_libraries(LAClosure_unittest gtest gtest_main)
+
+add_executable(LR1_unittest
+        LR1_unittest.cc
+        ${PARSER_SOURCE_DIR}/Symbol.cc
+        ${PARSER_SOURCE_DIR}/DFA.cc
+        ${PARSER_SOURCE_DIR}/Closure.cc
+        ${PARSER_SOURCE_DIR}/LAClosure.cc
+        ${PARSER_SOURCE_DIR}/Rule.cc
+        ${PARSER_SOURCE_DIR}/Item.cc
+        ${PARSER_SOURCE_DIR}/First.cc
+        ${PARSER_SOURCE_DIR}/LAItem.cc
+        ${PARSER_SOURCE_DIR}/LR1.cc
+        ${PARSER_SOURCE_DIR}/LR0.cc
+        AutomatonTestHelper.h
+        )
+target_link_libraries(LR1_unittest gtest gtest_main)

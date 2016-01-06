@@ -25,8 +25,9 @@ class Automaton: public LR0::Automaton {
  public:
 
   static Automaton Make(RuleID init) {
-    Automaton atm;
-    //return LR0::Automaton::Make(init);
+    LR1::Automaton atm;
+    atm.construct(init);
+    return atm;
   }
 
  private:

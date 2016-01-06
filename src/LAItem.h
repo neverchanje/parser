@@ -54,10 +54,10 @@ struct LAItem: public Item {
 
 template<class T>
 typename std::enable_if<std::is_same<T, LAItem>::value, LAItem>::type
-DownCast(const UPItem &pItem) {
-  LAItem ret(pItem->rule_id,
-             pItem->offset,
-             boost::any_cast<SymbolID>(pItem->Others()));
+DownCast(const Item &it) {
+  LAItem ret(it.rule_id,
+             it.offset,
+             boost::any_cast<SymbolID>(it.Others()));
   return ret;
 }
 

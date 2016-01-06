@@ -35,13 +35,15 @@ void DFA::Dump() const {
 std::string DFA::ToString() const {
   std::string ret;
   std::stringstream ss;
+  ret += "\n";
   for (auto t1 = trans_.begin(); t1 != trans_.end(); t1++) {
-    for (auto t2 = (*t1).second.begin(); t2 != (*t1).second.end(); t2++) {
-      ss << "<from:" << (*t1).first
-          << ", sym:" << (*t2).first
-          << ", to:" << (*t2).second
+    for (auto t2 = t1->second.begin(); t2 != t1->second.end(); t2++) {
+      ss << "<from:" << t1->first
+          << ", sym:" << t2->first
+          << ", to:" << t2->second
           << ">\n";
-      ss >> ret;
+      ret += ss.str();
+      ss.str(""); // clear the content of the stringstream
     }
   }
   return ret;

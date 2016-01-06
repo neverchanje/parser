@@ -5,7 +5,7 @@
 #ifndef PARSER_AUTOMATONTESTHELPER_H
 #define PARSER_AUTOMATONTESTHELPER_H
 
-#include "LR0.h"
+#include "DFA.h"
 #include <gtest/gtest.h>
 
 namespace parser {
@@ -15,10 +15,10 @@ inline bool DFACmp(const DFA &lhs, const DFA &rhs) {
   return lhs.GetTransTable() == rhs.GetTransTable();
 }
 
-::testing::AssertionResult AssertItemSetCmp(const char *expect_expr,
-                                            const char *actual_expr,
-                                            const DFA &expect,
-                                            const DFA &actual) {
+::testing::AssertionResult AssertDFACmp(const char *expect_expr,
+                                        const char *actual_expr,
+                                        const DFA &expect,
+                                        const DFA &actual) {
   if (DFACmp(expect, actual))
     return ::testing::AssertionSuccess();
 

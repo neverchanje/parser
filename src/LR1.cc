@@ -21,7 +21,7 @@ State Automaton::startState(RuleID init) {
 ItemSet Automaton::closure(ItemSet::iterator first, ItemSet::iterator last) const {
   std::vector<LAItem> vec;
   for (auto it = first; it != last; it++) {
-    vec.push_back(DownCast<LAItem>(*it));
+    vec.push_back(DownCast<LAItem>(*(*it)));
   }
   return Closure(std::move(vec));
 }

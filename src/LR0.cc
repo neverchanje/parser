@@ -24,7 +24,11 @@ State Automaton::startState(RuleID init) {
 
 Automaton Automaton::Make(RuleID init) {
   Automaton atm;
+  atm.construct(init);
+  return atm;
+}
 
+void Automaton::construct(RuleID init) {
   //Each ItemSet in StateTable contains only kernel items.
   StateTable table;
   std::queue<StateTable::iterator> que;
@@ -32,14 +36,14 @@ Automaton Automaton::Make(RuleID init) {
   ItemSet clsr, tmp;
   std::pair<StateTable::iterator, bool> ret;
 
-  ret = table.insert(atm.startState(init));
+  ret = table.insert(startState(init));
   que.push(ret.first);
 
   while (!que.empty()) {
     const ItemSet &IS = QFRONT_ISET(que); // I contains only kernel items.
-    DumpClosure(IS);
-    clsr = atm.closure(IS.begin(), IS.end());
-//    DumpClosure(clsr);
+//    DumpClosure(IS);
+    clsr = closure(IS.begin(), IS.end());
+    DumpClosure(clsr);
     tmp.clear();
 
     for (auto i = clsr.begin(); i != clsr.end(); i++) {
@@ -64,17 +68,16 @@ Automaton Automaton::Make(RuleID init) {
       if (X != Y && !tmp.empty()) {
         ret = table.insert(MakeState(std::move(tmp), -1));
         if (ret.second) {
-          ret.first->second = atm.dfa_.MakeState();
+          ret.first->second = dfa_.MakeState();
           que.push(ret.first);
         }
-        atm.dfa_.AddTrans(QFRONT_STATE(que), X, ret.first->second);
+        // GOTO
+        dfa_.AddTrans(QFRONT_STATE(que), X, ret.first->second);
         tmp.clear();
       }
     }
     que.pop();
   }
-
-  return atm;
 }
 
 void Automaton::Dump() const {
@@ -105,14 +108,6 @@ size_t ItemSetHasher::operator()(const ItemSet &val) const {
     boost::hash_combine(seed, it->HashValue());
   }
   return seed;
-}
-
-namespace {
-namespace boost {
-inline std::size_t hash(const UPItem &val) {
-  return val->HashValue();
-}
-}
 }
 
 } // namespace LR0

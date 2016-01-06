@@ -4,8 +4,7 @@
 
 #include <gtest/gtest.h>
 #include "LR0.h"
-#include "Symbol.h"
-#include "Rule.h"
+#include "AutomatonTestHelper.h"
 
 using namespace parser;
 
@@ -78,7 +77,7 @@ TEST(LR0_Basics1, LR0_Basics1_Test) {
   expect.AddTrans(0, S, 3);
   expect.AddTrans(0, id, 2);
   expect.AddTrans(0, multiply, 1);
-
+  EXPECT_PRED_FORMAT2 (AssertDFACmp, expect, actual.GetDFA());
 }
 
 

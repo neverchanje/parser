@@ -3,6 +3,7 @@
 //
 
 #ifndef PARSER_DFA_H
+#define PARSER_DFA_H
 
 #include <unordered_map>
 
@@ -38,6 +39,8 @@ class DFA {
   bool HasTrans(State from, SymbolID sym) const;
 
   State GetTrans(State, SymbolID sym) const;
+
+ public:
 
   // (DEBUG) Write out all of the transitions in the DFA.
   void Dump() const;
