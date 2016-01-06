@@ -48,6 +48,7 @@ add_executable(LR0_unittest
         ${PARSER_SOURCE_DIR}/Rule.cc
         ${PARSER_SOURCE_DIR}/Item.cc
         AutomatonTestHelper.h
+
         )
 target_link_libraries(LR0_unittest gtest gtest_main)
 

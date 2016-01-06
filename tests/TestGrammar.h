@@ -134,6 +134,58 @@ class TestGrammar3: public ::testing::Test {
   SymbolID S_, S, C, c, d, eor;
 };
 
+class TestGrammar4: public ::testing::Test {
+ protected:
+
+  virtual void SetUp() {
+
+    Symbol::Make("E_", Symbol::Type::NONTERMINAL);
+    Symbol::Make("E", Symbol::Type::NONTERMINAL);
+    Symbol::Make("T", Symbol::Type::NONTERMINAL);
+    Symbol::Make("F", Symbol::Type::NONTERMINAL);
+    Symbol::Make("+", Symbol::Type::TERMINAL);
+    Symbol::Make("*", Symbol::Type::TERMINAL);
+    Symbol::Make("(", Symbol::Type::TERMINAL);
+    Symbol::Make(")", Symbol::Type::TERMINAL);
+    Symbol::Make("id", Symbol::Type::TERMINAL);
+    Symbol::EOR();
+
+    SymbolTable::Pack();
+
+    E_ = SymbolTable::GetSymbol("E_").GetID();
+    E = SymbolTable::GetSymbol("E").GetID();
+    T = SymbolTable::GetSymbol("T").GetID();
+    F = SymbolTable::GetSymbol("F").GetID();
+    plus = SymbolTable::GetSymbol("+").GetID();
+    right_bracket = SymbolTable::GetSymbol(")").GetID();
+    left_bracket = SymbolTable::GetSymbol("(").GetID();
+    multiply = SymbolTable::GetSymbol("*").GetID();
+    id = SymbolTable::GetSymbol("id").GetID();
+
+    // E_ -> E
+    // E -> E + T
+    // E -> T
+    // T -> T * F
+    // T -> F
+    // F -> (E)
+    // F -> id
+    r0 = Rule::Make(E_, {E}).GetID();
+    r1 = Rule::Make(E, {E, plus, T}).GetID();
+    r2 = Rule::Make(E, {T}).GetID();
+    r3 = Rule::Make(T, {T, multiply, F}).GetID();
+    r4 = Rule::Make(T, {F}).GetID();
+    r5 = Rule::Make(F, {left_bracket, E, right_bracket}).GetID();
+    r6 = Rule::Make(F, {id}).GetID();
+  }
+
+  virtual void TearDown() {
+    RuleTable::Clear();
+  }
+
+  RuleID r0, r1, r2, r3, r4, r5, r6;
+  SymbolID E_, E, T, F, plus, multiply, left_bracket, right_bracket, id;
+};
+
 } // namespace parser
 
 #endif //PARSER_TESTGRAMMAR_H
