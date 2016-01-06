@@ -9,13 +9,25 @@
 namespace parser {
 
 // For the given Item (A -> a •B b, la), calculate the lookahead symbol of
-// Item A -> a B •b, which is FIRST(b la). If b -> $ is a production,
-// then add la to FIRST(b la).
+// Item A -> a B •b, which is FIRST(b la).
+//
+// if b -> $ is not a production
+//  FIRST(b la) = FIRST(b)
+// else
+//  if la is not $
+//    FIRST(b la) = FIRST(b) + la - $
+//  else
+//    FIRST(b la) = FIRST(b) + la
+//
 static SymbolSet calculateLA(SymbolID b, SymbolID la) {
   SymbolSet symset = First(b);
-  // if b -> $ is a production
-  if (symset.find(Symbol::EOR().GetID()) != symset.end()) {
+  SymbolID eor = Symbol::EOR().GetID();
+
+  if (symset.find(eor) != symset.end()) {
     symset.insert(la);
+    if (la != eor) {
+      symset.erase(eor);
+    }
   }
   return symset;
 }
@@ -38,7 +50,7 @@ ItemSet Closure(std::vector<LAItem> &&I) {
     B = it.GetPointed();
 
     if (Symbol::IsNonTerminal(B)) {
-
+      // b is the symbol next to B
       b = RuleTable::GetRule(it.rule_id).GetRHS(it.offset + 1);
       la_set = calculateLA(b, it.lookahead);
       const auto &derives = RuleTable::GetDerives(B);

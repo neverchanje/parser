@@ -68,6 +68,7 @@ add_executable(LAClosure_unittest
         ${PARSER_SOURCE_DIR}/Item.cc
         ${PARSER_SOURCE_DIR}/First.cc
         ${PARSER_SOURCE_DIR}/LAItem.cc
+        TestGrammar.h
         ItemSetTestHelper.h
         )
 target_link_libraries(LAClosure_unittest gtest gtest_main)

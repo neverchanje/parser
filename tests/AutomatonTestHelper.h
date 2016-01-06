@@ -24,7 +24,7 @@ inline bool DFACmp(const DFA &lhs, const DFA &rhs) {
 
   auto res = ::testing::AssertionFailure();
   res << "Value of: " << actual_expr << std::endl;
-  res << "  Actual: " << actual.ToString() << std::endl;
+  res << "Actual: " << actual.ToString() << std::endl;
   res << "Expected: " << expect_expr << std::endl;
   res << "Which is: " << expect.ToString() << std::endl;
   return res;
